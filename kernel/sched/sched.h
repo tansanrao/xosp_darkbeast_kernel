@@ -420,14 +420,6 @@ struct rq {
 #endif
 	int skip_clock_update;
 
-#ifdef CONFIG_INTELLI_PLUG
-	/* time-based average load */
-	u64 nr_last_stamp;
-	unsigned int ave_nr_running;
-	u64 nr_running_integral;
-	seqcount_t ave_seqcnt;
-#endif
-
 	/* capture load from *all* tasks on this cpu: */
 	struct load_weight load;
 	unsigned long nr_load_updates;
@@ -505,6 +497,9 @@ struct rq {
 	int capacity;
 	int max_possible_capacity;
 	u64 window_start;
+	u32 mostly_idle_load;
+	int mostly_idle_nr_run;
+	int mostly_idle_freq;
 
 #ifdef CONFIG_SCHED_FREQ_INPUT
 	unsigned int old_busy_time;
@@ -585,6 +580,27 @@ DECLARE_PER_CPU(struct rq, runqueues);
 #define task_rq(p)		cpu_rq(task_cpu(p))
 #define cpu_curr(cpu)		(cpu_rq(cpu)->curr)
 #define raw_rq()		(&__raw_get_cpu_var(runqueues))
+
+#ifdef CONFIG_INTELLI_PLUG
+struct nr_stats_s {
+	/* time-based average load */
+	u64 nr_last_stamp;
+	unsigned int ave_nr_running;
+	seqcount_t ave_seqcnt;
+};
+
+/* 27 ~= 134217728ns = 134.2ms
+ * 26 ~=  67108864ns =  67.1ms
+ * 25 ~=  33554432ns =  33.5ms
+ * 24 ~=  16777216ns =  16.8ms
+ */
+#define NR_AVE_PERIOD_EXP	27
+#define NR_AVE_SCALE(x)		((x) << FSHIFT)
+#define NR_AVE_PERIOD		(1 << NR_AVE_PERIOD_EXP)
+#define NR_AVE_DIV_PERIOD(x)	((x) >> NR_AVE_PERIOD_EXP)
+
+DECLARE_PER_CPU(struct nr_stats_s, runqueue_stats);
+#endif
 
 #ifdef CONFIG_SMP
 
@@ -774,6 +790,12 @@ dec_cumulative_runnable_avg(struct rq *rq, struct task_struct *p)
 		rq->cumulative_runnable_avg -= p->ravg.demand;
 	BUG_ON((s64)rq->cumulative_runnable_avg < 0);
 }
+
+#define pct_to_real(tunable)	\
+		(div64_u64((u64)tunable * (u64)max_task_load(), 100))
+
+#define real_to_pct(tunable)	\
+		(div64_u64((u64)tunable * (u64)100, (u64)max_task_load()))
 
 #else	/* CONFIG_SCHED_HMP */
 
@@ -1336,17 +1358,14 @@ static inline u64 steal_ticks(u64 steal)
 #endif
 
 #ifdef CONFIG_INTELLI_PLUG
-#define NR_AVE_PERIOD_EXP	28
-#define NR_AVE_SCALE(x)	((x) << FSHIFT)
-#define NR_AVE_PERIOD		(1 << NR_AVE_PERIOD_EXP)
-#define NR_AVE_DIV_PERIOD(x)	((x) >> NR_AVE_PERIOD_EXP)
-
 static inline unsigned int do_avg_nr_running(struct rq *rq)
 {
-	s64 nr, deltax;
-	unsigned int ave_nr_running= rq->ave_nr_running;
 
-	deltax = rq->clock_task - rq->nr_last_stamp;
+	struct nr_stats_s *nr_stats = &per_cpu(runqueue_stats, rq->cpu);
+	unsigned int ave_nr_running = nr_stats->ave_nr_running;
+	s64 nr, deltax;
+
+	deltax = rq->clock_task - nr_stats->nr_last_stamp;
 	nr = NR_AVE_SCALE(rq->nr_running);
 
 	if (deltax > NR_AVE_PERIOD)
@@ -1357,25 +1376,23 @@ static inline unsigned int do_avg_nr_running(struct rq *rq)
 
 	return ave_nr_running;
 }
-
-static inline u64 do_nr_running_integral(struct rq *rq)
-{
-	s64 nr, deltax;
-	u64 nr_running_integral = rq->nr_running_integral;
-
-	deltax = rq->clock_task - rq->nr_last_stamp;
-	nr = NR_AVE_SCALE(rq->nr_running);
-
-	nr_running_integral += nr * deltax;
-
-	return nr_running_integral;
-}
 #endif
 
 static inline void inc_nr_running(struct rq *rq)
 {
+#ifdef CONFIG_INTELLI_PLUG
+	struct nr_stats_s *nr_stats = &per_cpu(runqueue_stats, rq->cpu);
+#endif
 	sched_update_nr_prod(cpu_of(rq), rq->nr_running, true);
+#ifdef CONFIG_INTELLI_PLUG
+	write_seqcount_begin(&nr_stats->ave_seqcnt);
+	nr_stats->ave_nr_running = do_avg_nr_running(rq);
+	nr_stats->nr_last_stamp = rq->clock_task;
+#endif
 	rq->nr_running++;
+#ifdef CONFIG_INTELLI_PLUG
+	write_seqcount_end(&nr_stats->ave_seqcnt);
+#endif
 
 #ifdef CONFIG_NO_HZ_FULL
 	if (rq->nr_running == 2) {
@@ -1390,8 +1407,19 @@ static inline void inc_nr_running(struct rq *rq)
 
 static inline void dec_nr_running(struct rq *rq)
 {
+#ifdef CONFIG_INTELLI_PLUG
+	struct nr_stats_s *nr_stats = &per_cpu(runqueue_stats, rq->cpu);
+#endif
 	sched_update_nr_prod(cpu_of(rq), rq->nr_running, false);
+#ifdef CONFIG_INTELLI_PLUG
+	write_seqcount_begin(&nr_stats->ave_seqcnt);
+	nr_stats->ave_nr_running = do_avg_nr_running(rq);
+	nr_stats->nr_last_stamp = rq->clock_task;
+#endif
 	rq->nr_running--;
+#ifdef CONFIG_INTELLI_PLUG
+	write_seqcount_end(&nr_stats->ave_seqcnt);
+#endif
 }
 
 static inline void rq_last_tick_reset(struct rq *rq)
@@ -1682,16 +1710,3 @@ static inline u64 irq_time_read(int cpu)
 }
 #endif /* CONFIG_64BIT */
 #endif /* CONFIG_IRQ_TIME_ACCOUNTING */
-
-static inline void account_reset_rq(struct rq *rq)
-{
-#ifdef CONFIG_IRQ_TIME_ACCOUNTING
-	rq->prev_irq_time = 0;
-#endif
-#ifdef CONFIG_PARAVIRT
-	rq->prev_steal_time = 0;
-#endif
-#ifdef CONFIG_PARAVIRT_TIME_ACCOUNTING
-	rq->prev_steal_time_rq = 0;
-#endif
-}

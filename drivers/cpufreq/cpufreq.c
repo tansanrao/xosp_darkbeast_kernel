@@ -339,12 +339,20 @@ void cpufreq_notify_transition(struct cpufreq_policy *policy,
 }
 EXPORT_SYMBOL_GPL(cpufreq_notify_transition);
 
+/**
+ * cpufreq_notify_utilization - notify CPU userspace about CPU utilization
+ * change
+ *
+ * This function is called everytime the CPU load is evaluated by the
+ * ondemand governor. It notifies userspace of cpu load changes via sysfs.
+ */
 void cpufreq_notify_utilization(struct cpufreq_policy *policy,
 		unsigned int util)
 {
 	if (policy)
 		policy->util = util;
 }
+
 
 /*********************************************************************
  *                          SYSFS INTERFACE                          *
@@ -431,7 +439,7 @@ show_one(cpuinfo_transition_latency, cpuinfo.transition_latency);
 show_one(scaling_min_freq, min);
 show_one(scaling_max_freq, max);
 show_one(scaling_cur_freq, cur);
-show_one(cpu_utilization, util);
+
 static int cpufreq_set_policy(struct cpufreq_policy *policy,
 				struct cpufreq_policy *new_policy);
 
@@ -651,7 +659,6 @@ cpufreq_freq_attr_ro(scaling_cur_freq);
 cpufreq_freq_attr_ro(bios_limit);
 cpufreq_freq_attr_ro(related_cpus);
 cpufreq_freq_attr_ro(affected_cpus);
-cpufreq_freq_attr_ro(cpu_utilization);
 cpufreq_freq_attr_rw(scaling_min_freq);
 cpufreq_freq_attr_rw(scaling_max_freq);
 cpufreq_freq_attr_rw(scaling_governor);
@@ -664,7 +671,6 @@ static struct attribute *default_attrs[] = {
 	&scaling_min_freq.attr,
 	&scaling_max_freq.attr,
 	&affected_cpus.attr,
-	&cpu_utilization.attr,
 	&related_cpus.attr,
 	&scaling_governor.attr,
 	&scaling_driver.attr,
@@ -680,10 +686,15 @@ static ssize_t show(struct kobject *kobj, struct attribute *attr, char *buf)
 {
 	struct cpufreq_policy *policy = to_policy(kobj);
 	struct freq_attr *fattr = to_attr(attr);
-	ssize_t ret;
+	ssize_t ret = -EINVAL;
+
+	get_online_cpus();
+
+	if (!cpu_online(policy->cpu))
+		goto unlock;
 
 	if (!down_read_trylock(&cpufreq_rwsem))
-		return -EINVAL;
+		goto unlock;
 
 	down_read(&policy->rwsem);
 
@@ -694,7 +705,8 @@ static ssize_t show(struct kobject *kobj, struct attribute *attr, char *buf)
 
 	up_read(&policy->rwsem);
 	up_read(&cpufreq_rwsem);
-
+unlock:
+	put_online_cpus();
 	return ret;
 }
 
@@ -1415,7 +1427,7 @@ static void cpufreq_out_of_sync(unsigned int cpu, unsigned int old_freq,
 	cpufreq_notify_transition(policy, &freqs, CPUFREQ_POSTCHANGE);
 }
 
-/**
+ /**
  * cpufreq_quick_get_util - get the CPU utilization from policy->util
  * @cpu: CPU number
  *
@@ -1841,21 +1853,22 @@ EXPORT_SYMBOL_GPL(cpufreq_driver_target);
  * when "event" is CPUFREQ_GOV_LIMITS
  */
 
- int __cpufreq_driver_getavg(struct cpufreq_policy *policy, unsigned int cpu)
- {
-     int ret = 0;
-     
-     policy = cpufreq_cpu_get(policy->cpu);
-     if (!policy)
-     return -EINVAL;
-     
-     if (cpu_online(cpu) && cpufreq_driver->getavg)
-     ret = cpufreq_driver->getavg(policy, cpu);
-     
-     cpufreq_cpu_put(policy);
-     return ret;
- }
- EXPORT_SYMBOL_GPL(__cpufreq_driver_getavg);
+int __cpufreq_driver_getavg(struct cpufreq_policy *policy, unsigned int cpu)
+{
+    int ret = 0;
+    
+    policy = cpufreq_cpu_get(policy->cpu);
+    if (!policy)
+    return -EINVAL;
+    
+    if (cpu_online(cpu) && cpufreq_driver->getavg)
+    ret = cpufreq_driver->getavg(policy, cpu);
+    
+    cpufreq_cpu_put(policy);
+    return ret;
+}
+EXPORT_SYMBOL_GPL(__cpufreq_driver_getavg);
+ 
  
 static int __cpufreq_governor(struct cpufreq_policy *policy,
 					unsigned int event)
