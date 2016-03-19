@@ -230,6 +230,7 @@ struct regmap_config {
 
 	bool use_single_rw;
 	bool can_multi_write;
+
 	enum regmap_endian reg_format_endian;
 	enum regmap_endian val_format_endian;
 
