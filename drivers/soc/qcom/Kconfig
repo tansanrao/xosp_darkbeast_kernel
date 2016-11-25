@@ -561,7 +561,6 @@ config MSM_PERFORMANCE
 	  It ensures that no more than a user specified number of CPUs stay
 	  online at any given point in time.
 
-<<<<<<< HEAD
 config MSM_PERFORMANCE_HOTPLUG_ON
         bool "Hotplug functionality through msm_performance turned on"
         depends on MSM_PERFORMANCE
@@ -571,25 +570,6 @@ config MSM_PERFORMANCE_HOTPLUG_ON
 	  capability of msm_performance driver. Setting this flag to false will
           compile out the nodes needed for core-control functionality through
           msm_performance.
-=======
-config ONEPLUS_HCUBE
-	tristate "Core control module by OnePlus"
-	help
-	  Add support for OnePlus modified Qualcomm core control module
-
-config QCOM_NPA_DUMP
-	bool "Read NPA dump from the RPM memory"
-	depends on DEBUG_FS
-	help
-	  Read the NPA dump from RPM memory through debugfs.
-
-config KERNEL_TEXT_MPU_PROT
-	bool "Enable xpu protection of kernel r/o sections"
-	help
-	  Enables xpu protection of kernel code and read-only data
-	  sections early in boot. Read access is permitted to
-	  all masters; Write access is only permited to the
-	  secure world.	  
 	 
 config INTELLI_PLUG
     bool "Enable intelli-plug cpu hotplug driver"
