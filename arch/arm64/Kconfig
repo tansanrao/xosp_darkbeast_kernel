@@ -101,6 +101,14 @@ config ARCH_MMAP_RND_COMPAT_BITS_MIN
 
 config ARCH_MMAP_RND_COMPAT_BITS_MAX
        default 16
+	default 20 if ARM64_64K_PAGES
+	default 24
+
+config ARCH_MMAP_RND_COMPAT_BITS_MIN
+	default 11
+
+config ARCH_MMAP_RND_COMPAT_BITS_MAX
+	default 16
 
 config STACKTRACE_SUPPORT
 	def_bool y
