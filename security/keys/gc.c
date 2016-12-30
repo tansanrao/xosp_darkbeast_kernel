@@ -208,6 +208,11 @@ static noinline void key_gc_unused_keys(struct list_head *keys)
 			key->type->destroy(key);
 
 		key_user_put(key->user);
+		/* now throw away the key memory */
+		if (key->type->destroy)
+			key->type->destroy(key);
+
+                key_user_put(key->user);
 
 		kfree(key->description);
 
