@@ -1,9 +1,9 @@
 /*
- * clearwater-tables.c  --  data tables for CLEARWATER class codecs
+ * moon-tables.c  --  data tables for MOON class codecs
  *
- * Copyright 2014 Wolfson Microelectronics plc
+ * Copyright 2015 Cirrus Logic
  *
- * Author: Nariman Poushin <nariman@opensource.wolfsonmicro.com>
+ * Author: Nikesh Oswal <nikesh@opensource.wolfsonmicro.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 as
@@ -18,326 +18,52 @@
 
 #include "arizona.h"
 
-static const struct reg_default clearwater_reva_16_patch[] = {
-	{ 0x80,  0x0003 },
-	{ 0x213, 0x03E4 },
-	{ 0x177, 0x0281 },
-	{ 0x197, 0x0281 },
-	{ 0x1B7, 0x0281 },
-	{ 0x4B1, 0x010A },
-	{ 0x4CF, 0x0933 },
-	{ 0x36C, 0x011B },
-	{ 0x4B8, 0x1120 },
-	{ 0x4A0, 0x3280 },
-	{ 0x4A1, 0x3200 },
-	{ 0x4A2, 0x3200 },
-	{ 0x441, 0xC050 },
-	{ 0x4A4, 0x000B },
-	{ 0x4A5, 0x000B },
-	{ 0x4A6, 0x000B },
-	{ 0x4E2, 0x1E1D },
-	{ 0x4E3, 0x1E1D },
-	{ 0x4E4, 0x1E1D },
-	{ 0x293, 0x0080 },
-	{ 0x17D, 0x0303 },
-	{ 0x19D, 0x0303 },
-	{ 0x27E, 0x0000 },
-	{ 0x80,  0x0000 },
-	{ 0x80,  0x0000 },
-	{ 0x448, 0x003f },
-};
-
-static const struct reg_default clearwater_revc_16_patch[] = {
-	{ 0x27E, 0x0000 },
-	{ 0x2C2, 0x5 },
-	{ 0x448, 0x003f },
-};
-
-/* this patch is required for EDRE on RevA*/
-static const struct reg_default clearwater_reva_32_patch[] = {
-	{  0x3000, 0xC2253632},
-	{  0x3002, 0xC2300001},
-	{  0x3004, 0x8225100E},
-	{  0x3006, 0x22251803},
-	{  0x3008, 0x82310B00},
-	{  0x300A, 0xE231023B},
-	{  0x300C, 0x2313B01},
-	{  0x300E, 0x62300000},
-	{  0x3010, 0xE2314288},
-	{  0x3012, 0x2310B00},
-	{  0x3014, 0x2310B00},
-	{  0x3016, 0x4050100},
-	{  0x3018, 0x42310C02},
-	{  0x301A, 0xE2310227},
-	{  0x301C, 0x2313B01},
-	{  0x301E, 0xE2314266},
-	{  0x3020, 0xE2315294},
-	{  0x3022, 0x2310B00},
-	{  0x3024, 0x2310B00},
-	{  0x3026, 0x2251100},
-	{  0x3028, 0x2251401},
-	{  0x302A, 0x2250200},
-	{  0x302C, 0x2251001},
-	{  0x302E, 0x2250200},
-	{  0x3030, 0xE2310266},
-	{  0x3032, 0x82314B15},
-	{  0x3034, 0x82310B15},
-	{  0x3036, 0xE2315294},
-	{  0x3038, 0x2310B00},
-	{  0x303A, 0x8225160D},
-	{  0x303C, 0x225F501},
-	{  0x303E, 0x8225061C},
-	{  0x3040, 0x2251000},
-	{  0x3042, 0x4051101},
-	{  0x3044, 0x2251800},
-	{  0x3046, 0x42251203},
-	{  0x3048, 0x2251101},
-	{  0x304A, 0xC2251300},
-	{  0x304C, 0x2225FB02},
-	{  0x3050, 0xC2263632},
-	{  0x3052, 0xC2300001},
-	{  0x3054, 0x8226100E},
-	{  0x3056, 0x22261803},
-	{  0x3058, 0x82310B02},
-	{  0x305A, 0xE231023B},
-	{  0x305C, 0x2313B01},
-	{  0x305E, 0x62300000},
-	{  0x3060, 0xE2314288},
-	{  0x3062, 0x2310B00},
-	{  0x3064, 0x2310B00},
-	{  0x3066, 0x4050000},
-	{  0x3068, 0x42310C03},
-	{  0x306A, 0xE2310227},
-	{  0x306C, 0x2313B01},
-	{  0x306E, 0xE2314266},
-	{  0x3070, 0xE2315294},
-	{  0x3072, 0x2310B00},
-	{  0x3074, 0x2310B00},
-	{  0x3076, 0x2261100},
-	{  0x3078, 0x2261401},
-	{  0x307A, 0x2260200},
-	{  0x307C, 0x2261001},
-	{  0x307E, 0x2260200},
-	{  0x3080, 0xE2310266},
-	{  0x3082, 0x82314B17},
-	{  0x3084, 0x82310B17},
-	{  0x3086, 0xE2315294},
-	{  0x3088, 0x2310B00},
-	{  0x308A, 0x8226160D},
-	{  0x308C, 0x226F501},
-	{  0x308E, 0x8226061C},
-	{  0x3090, 0x2261000},
-	{  0x3092, 0x4051101},
-	{  0x3094, 0x2261800},
-	{  0x3096, 0x42261203},
-	{  0x3098, 0x2261101},
-	{  0x309A, 0xC2261300},
-	{  0x309C, 0x2226FB02},
-	{  0x309E, 0xF000},
-	{  0x30A0, 0xC2273632},
-	{  0x30A2, 0xC2400001},
-	{  0x30A4, 0x8227100E},
-	{  0x30A6, 0x22271803},
-	{  0x30A8, 0x82410B00},
-	{  0x30AA, 0xE241023B},
-	{  0x30AC, 0x2413B01},
-	{  0x30AE, 0x62400000},
-	{  0x30B0, 0xE2414288},
-	{  0x30B2, 0x2410B00},
-	{  0x30B4, 0x2410B00},
-	{  0x30B6, 0x4050300},
-	{  0x30B8, 0x42410C02},
-	{  0x30BA, 0xE2410227},
-	{  0x30BC, 0x2413B01},
-	{  0x30BE, 0xE2414266},
-	{  0x30C0, 0xE2415294},
-	{  0x30C2, 0x2410B00},
-	{  0x30C4, 0x2410B00},
-	{  0x30C6, 0x2271100},
-	{  0x30C8, 0x2271401},
-	{  0x30CA, 0x2270200},
-	{  0x30CC, 0x2271001},
-	{  0x30CE, 0x2270200},
-	{  0x30D0, 0xE2410266},
-	{  0x30D2, 0x82414B15},
-	{  0x30D4, 0x82410B15},
-	{  0x30D6, 0xE2415294},
-	{  0x30D8, 0x2410B00},
-	{  0x30DA, 0x8227160D},
-	{  0x30DC, 0x227F501},
-	{  0x30DE, 0x8227061C},
-	{  0x30E0, 0x2271000},
-	{  0x30E2, 0x4051101},
-	{  0x30E4, 0x2271800},
-	{  0x30E6, 0x42271203},
-	{  0x30E8, 0x2271101},
-	{  0x30EA, 0xC2271300},
-	{  0x30EC, 0x2227FB02},
-	{  0x30F0, 0xC2283632},
-	{  0x30F2, 0xC2400001},
-	{  0x30F4, 0x8228100E},
-	{  0x30F6, 0x22281803},
-	{  0x30F8, 0x82410B02},
-	{  0x30FA, 0xE241023B},
-	{  0x30FC, 0x2413B01},
-	{  0x30FE, 0x62400000},
-	{  0x3100, 0xE2414288},
-	{  0x3102, 0x2410B00},
-	{  0x3104, 0x2410B00},
-	{  0x3106, 0x4050200},
-	{  0x3108, 0x42410C03},
-	{  0x310A, 0xE2410227},
-	{  0x310C, 0x2413B01},
-	{  0x310E, 0xE2414266},
-	{  0x3110, 0xE2415294},
-	{  0x3112, 0x2410B00},
-	{  0x3114, 0x2410B00},
-	{  0x3116, 0x2281100},
-	{  0x3118, 0x2281401},
-	{  0x311A, 0x2280200},
-	{  0x311C, 0x2281001},
-	{  0x311E, 0x2280200},
-	{  0x3120, 0xE2410266},
-	{  0x3122, 0x82414B17},
-	{  0x3124, 0x82410B17},
-	{  0x3126, 0xE2415294},
-	{  0x3128, 0x2410B00},
-	{  0x312A, 0x8228160D},
-	{  0x312C, 0x228F501},
-	{  0x312E, 0x8228061C},
-	{  0x3130, 0x2281000},
-	{  0x3132, 0x4051101},
-	{  0x3134, 0x2281800},
-	{  0x3136, 0x42281203},
-	{  0x3138, 0x2281101},
-	{  0x313A, 0xC2281300},
-	{  0x313C, 0x2228FB02},
-	{  0x3140, 0xC2293632},
-	{  0x3142, 0xC2500001},
-	{  0x3144, 0x8229100E},
-	{  0x3146, 0x22291803},
-	{  0x3148, 0x82510B00},
-	{  0x314A, 0xE251023B},
-	{  0x314C, 0x2513B01},
-	{  0x314E, 0x62500000},
-	{  0x3150, 0xE2514288},
-	{  0x3152, 0x2510B00},
-	{  0x3154, 0x2510B00},
-	{  0x3156, 0x4050500},
-	{  0x3158, 0x42510C02},
-	{  0x315A, 0xE2510227},
-	{  0x315C, 0x2513B01},
-	{  0x315E, 0xE2514266},
-	{  0x3160, 0xE2515294},
-	{  0x3162, 0x2510B00},
-	{  0x3164, 0x2510B00},
-	{  0x3166, 0x2291100},
-	{  0x3168, 0x2291401},
-	{  0x316A, 0x2290200},
-	{  0x316C, 0x2291001},
-	{  0x316E, 0x2290200},
-	{  0x3170, 0xE2510266},
-	{  0x3172, 0x82514B15},
-	{  0x3174, 0x82510B15},
-	{  0x3176, 0xE2515294},
-	{  0x3178, 0x2510B00},
-	{  0x317A, 0x8229160D},
-	{  0x317C, 0x229F501},
-	{  0x317E, 0x8229061C},
-	{  0x3180, 0x2291000},
-	{  0x3182, 0x4051101},
-	{  0x3184, 0x2291800},
-	{  0x3186, 0x42291203},
-	{  0x3188, 0x2291101},
-	{  0x318A, 0xC2291300},
-	{  0x318C, 0x2229FB02},
-	{  0x3190, 0xC22A3632},
-	{  0x3192, 0xC2500001},
-	{  0x3194, 0x822A100E},
-	{  0x3196, 0x222A1803},
-	{  0x3198, 0x82510B02},
-	{  0x319A, 0xE251023B},
-	{  0x319C, 0x2513B01},
-	{  0x319E, 0x62500000},
-	{  0x31A0, 0xE2514288},
-	{  0x31A2, 0x2510B00},
-	{  0x31A4, 0x2510B00},
-	{  0x31A6, 0x4050400},
-	{  0x31A8, 0x42510C03},
-	{  0x31AA, 0xE2510227},
-	{  0x31AC, 0x2513B01},
-	{  0x31AE, 0xE2514266},
-	{  0x31B0, 0xE2515294},
-	{  0x31B2, 0x2510B00},
-	{  0x31B4, 0x2510B00},
-	{  0x31B6, 0x22A1100},
-	{  0x31B8, 0x22A1401},
-	{  0x31BA, 0x22A0200},
-	{  0x31BC, 0x22A1001},
-	{  0x31BE, 0x22A0200},
-	{  0x31C0, 0xE2510266},
-	{  0x31C2, 0x82514B17},
-	{  0x31C4, 0x82510B17},
-	{  0x31C6, 0xE2515294},
-	{  0x31C8, 0x2510B00},
-	{  0x31CA, 0x822A160D},
-	{  0x31CC, 0x22AF501},
-	{  0x31CE, 0x822A061C},
-	{  0x31D0, 0x22A1000},
-	{  0x31D2, 0x4051101},
-	{  0x31D4, 0x22A1800},
-	{  0x31D6, 0x422A1203},
-	{  0x31D8, 0x22A1101},
-	{  0x31DA, 0xC22A1300},
-	{  0x31DC, 0x222AFB02},
-};
-
-static const struct reg_default clearwater_revc_32_patch[] = {
-	{ 0x3380, 0xE4103066 },
-	{ 0x3382, 0xE4103070 },
-	{ 0x3384, 0xE4103078 },
-	{ 0x3386, 0xE4103080 },
-	{ 0x3388, 0xE410F080 },
-	{ 0x338A, 0xE4143066 },
-	{ 0x338C, 0xE4143070 },
-	{ 0x338E, 0xE4143078 },
-	{ 0x3390, 0xE4143080 },
-	{ 0x3392, 0xE414F080 },
-	{ 0x3394, 0xE4103078 },
-	{ 0x3396, 0xE4103070 },
-	{ 0x3398, 0xE4103066 },
-	{ 0x339A, 0xE410F056 },
-	{ 0x339C, 0xE4143078 },
-	{ 0x339E, 0xE4143070 },
-	{ 0x33A0, 0xE4143066 },
-	{ 0x33A2, 0xE414F056 },
+static const struct reg_default moon_reva_16_patch[] = {
+	{ 0x8A,   0x5555 },
+	{ 0x8A,   0xAAAA },
+	{ 0x4CF,  0x0700 },
+	{ 0x171,  0x0003 },
+	{ 0x101,  0x0444 },
+	{ 0x159,  0x0002 },
+	{ 0x120,  0x0444 },
+	{ 0x1D1,  0x0004 },
+	{ 0x1E0,  0xC084 },
+	{ 0x159,  0x0000 },
+	{ 0x120,  0x0404 },
+	{ 0x101,  0x0404 },
+	{ 0x171,  0x0002 },
+	{ 0x17A,  0x2906 },
+	{ 0x19A,  0x2906 },
+	{ 0x441,  0xC750 },
+	{ 0x340,  0x0001 },
+	{ 0x112,  0x0405 },
+	{ 0x124,  0x0C49 },
+	{ 0x1300, 0x050E },
+	{ 0x1302, 0x0101 },
+	{ 0x1380, 0x0425 },
+	{ 0x1381, 0xF6D8 },
+	{ 0x1382, 0x0632 },
+	{ 0x1383, 0xFEC8 },
+	{ 0x1390, 0x042F },
+	{ 0x1391, 0xF6CA },
+	{ 0x1392, 0x0637 },
+	{ 0x1393, 0xFEC8 },
+	{ 0x281,  0x0000 },
+	{ 0x282,  0x0000 },
+	{ 0x4EA,  0x0100 },
+	{ 0x8A,   0xCCCC },
+	{ 0x8A,   0x3333 },
 };
 
 /* We use a function so we can use ARRAY_SIZE() */
-int clearwater_patch(struct arizona *arizona)
+int moon_patch(struct arizona *arizona)
 {
-	int ret = 0;
+	int ret;
 	const struct reg_default *patch16 = NULL;
-	const struct reg_default *patch32 = NULL;
-	unsigned int num16, num32;
+	unsigned int num16;
 
-	switch (arizona->rev) {
-	case 0:
-	case 1:
-		patch16 = clearwater_reva_16_patch;
-		num16 = ARRAY_SIZE(clearwater_reva_16_patch);
-
-		patch32 = clearwater_reva_32_patch;
-		num32 = ARRAY_SIZE(clearwater_reva_32_patch);
-		break;
-	default:
-		patch16 = clearwater_revc_16_patch;
-		num16 = ARRAY_SIZE(clearwater_revc_16_patch);
-
-		patch32 = clearwater_revc_32_patch;
-		num32 = ARRAY_SIZE(clearwater_revc_32_patch);
-		break;
-	}
+	patch16 = moon_reva_16_patch;
+	num16 = ARRAY_SIZE(moon_reva_16_patch);
 
 	if (patch16) {
 		ret = regmap_register_patch(arizona->regmap, patch16, num16);
@@ -348,21 +74,11 @@ int clearwater_patch(struct arizona *arizona)
 		}
 	}
 
-	if (patch32) {
-		ret = regmap_register_patch(arizona->regmap_32bit,
-					    patch32, num32);
-		if (ret < 0) {
-			dev_err(arizona->dev,
-				"Error in applying 32-bit patch: %d\n", ret);
-			return ret;
-		}
-	}
-
 	return 0;
 }
-EXPORT_SYMBOL_GPL(clearwater_patch);
+EXPORT_SYMBOL_GPL(moon_patch);
 
-static const struct regmap_irq clearwater_irqs[ARIZONA_NUM_IRQ] = {
+static const struct regmap_irq moon_irqs[ARIZONA_NUM_IRQ] = {
 	[ARIZONA_IRQ_BOOT_DONE] = { .reg_offset = 0,
 				  .mask = CLEARWATER_BOOT_DONE_EINT1 },
 	[ARIZONA_IRQ_CTRLIF_ERR] = { .reg_offset = 0,
@@ -372,11 +88,13 @@ static const struct regmap_irq clearwater_irqs[ARIZONA_NUM_IRQ] = {
 				  .mask = CLEARWATER_FLL1_LOCK_EINT1 },
 	[ARIZONA_IRQ_FLL2_CLOCK_OK] = { .reg_offset = 1,
 				  .mask = CLEARWATER_FLL2_LOCK_EINT1},
-	[ARIZONA_IRQ_FLL3_CLOCK_OK] = { .reg_offset = 1,
-				  .mask = CLEARWATER_FLL3_LOCK_EINT1},
+	[MOON_IRQ_FLLAO_CLOCK_OK] = { .reg_offset = 1,
+				  .mask = MOON_FLLAO_LOCK_EINT1},
 
 	[ARIZONA_IRQ_MICDET] = { .reg_offset = 5,
 				  .mask = CLEARWATER_MICDET_EINT1 },
+	[MOON_IRQ_MICDET2] = { .reg_offset = 5,
+				.mask = MOON_MICDET2_EINT1 },
 	[ARIZONA_IRQ_HPDET] = { .reg_offset = 5,
 				  .mask = CLEARWATER_HPDET_EINT1},
 
@@ -415,40 +133,54 @@ static const struct regmap_irq clearwater_irqs[ARIZONA_NUM_IRQ] = {
 	[ARIZONA_IRQ_DSP_IRQ8] = { .reg_offset = 10,
 				  .mask = CLEARWATER_DSP_IRQ8_EINT1},
 
-	[ARIZONA_IRQ_HP3R_SC_POS] = { .reg_offset = 11,
-				      .mask = CLEARWATER_HP3R_SC_EINT1},
-	[ARIZONA_IRQ_HP3L_SC_POS] = { .reg_offset = 11,
-				      .mask = CLEARWATER_HP3L_SC_EINT1},
-	[ARIZONA_IRQ_HP2R_SC_POS] = { .reg_offset = 11,
-				      .mask = CLEARWATER_HP2R_SC_EINT1},
-	[ARIZONA_IRQ_HP2L_SC_POS] = { .reg_offset = 11,
-				      .mask = CLEARWATER_HP2L_SC_EINT1},
-	[ARIZONA_IRQ_HP1R_SC_POS] = { .reg_offset = 11,
-				      .mask = CLEARWATER_HP1R_SC_EINT1},
-	[ARIZONA_IRQ_HP1L_SC_POS] = { .reg_offset = 11,
-				      .mask = CLEARWATER_HP1L_SC_EINT1},
+	[ARIZONA_IRQ_GP1] = { .reg_offset = 16,
+				  .mask = CLEARWATER_GP1_EINT1},
+	[ARIZONA_IRQ_GP2] = { .reg_offset = 16,
+				  .mask = CLEARWATER_GP2_EINT1},
+	[ARIZONA_IRQ_GP3] = { .reg_offset = 16,
+				.mask = CLEARWATER_GP3_EINT1},
+	[ARIZONA_IRQ_GP4] = { .reg_offset = 16,
+				.mask = CLEARWATER_GP4_EINT1},
+	[ARIZONA_IRQ_GP5] = { .reg_offset = 16,
+				  .mask = CLEARWATER_GP5_EINT1},
+	[ARIZONA_IRQ_GP6] = { .reg_offset = 16,
+				  .mask = CLEARWATER_GP6_EINT1},
+	[ARIZONA_IRQ_GP7] = { .reg_offset = 16,
+				.mask = CLEARWATER_GP7_EINT1},
+	[ARIZONA_IRQ_GP8] = { .reg_offset = 16,
+				.mask = CLEARWATER_GP8_EINT1},
 
-	[ARIZONA_IRQ_SPK_OVERHEAT_WARN] = { .reg_offset = 14,
-				.mask = CLEARWATER_SPK_OVERHEAT_WARN_EINT1},
-	[ARIZONA_IRQ_SPK_OVERHEAT] = { .reg_offset = 14,
-				.mask = CLEARWATER_SPK_SHUTDOWN_EINT1},
+	[MOON_IRQ_DSP1_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP1},
+	[MOON_IRQ_DSP2_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP2},
+	[MOON_IRQ_DSP3_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP3},
+	[MOON_IRQ_DSP4_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP4},
+	[MOON_IRQ_DSP5_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP5},
+	[MOON_IRQ_DSP6_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP6},
+	[MOON_IRQ_DSP7_BUS_ERROR] = { .reg_offset = 32,
+				  .mask = MOON_ADSP_ERROR_STATUS_DSP7},
 };
 
-const struct regmap_irq_chip clearwater_irq = {
-	.name = "clearwater IRQ",
+const struct regmap_irq_chip moon_irq = {
+	.name = "moon IRQ",
 	.status_base = CLEARWATER_IRQ1_STATUS_1,
 	.mask_base = CLEARWATER_IRQ1_MASK_1,
 	.ack_base = CLEARWATER_IRQ1_STATUS_1,
-	.num_regs = 15,
-	.irqs = clearwater_irqs,
-	.num_irqs = ARRAY_SIZE(clearwater_irqs),
+	.num_regs = 33,
+	.irqs = moon_irqs,
+	.num_irqs = ARRAY_SIZE(moon_irqs),
 };
-EXPORT_SYMBOL_GPL(clearwater_irq);
+EXPORT_SYMBOL_GPL(moon_irq);
 
-static const struct reg_default clearwater_reg_default[] = {
-	{ 0x00000008, 0x0309 }, /* R8     - Ctrl IF CFG 1 */
+static const struct reg_default moon_reg_default[] = {
+	{ 0x00000008, 0x0308 }, /* R8     - Ctrl IF CFG 1 */
 	{ 0x00000009, 0x0200 }, /* R9     - Ctrl IF CFG 2 */
-	{ 0x0000000A, 0x0309 }, /* R10    - Ctrl IF CFG 3 */
+	{ 0x0000000A, 0x0308 }, /* R10    - Ctrl IF CFG 3 */
 	{ 0x00000016, 0x0000 }, /* R22 (0x16) - Write Sequencer Ctrl 0 */
 	{ 0x00000017, 0x0000 }, /* R23 (0x17) - Write Sequencer Ctrl 1 */
 	{ 0x00000018, 0x0000 }, /* R24 (0x18) - Write Sequencer Ctrl 2 */
@@ -485,10 +217,10 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000102, 0x0011 }, /* R258 (0x102) - Sample rate 1 */
 	{ 0x00000103, 0x0011 }, /* R259 (0x103) - Sample rate 2 */
 	{ 0x00000104, 0x0011 }, /* R260 (0x104) - Sample rate 3 */
-	{ 0x00000112, 0x0305 }, /* R274 (0x112) - Async clock 1 */
+	{ 0x00000112, 0x0405 }, /* R274 (0x112) - Async clock 1 */
 	{ 0x00000113, 0x0011 }, /* R275 (0x113) - Async sample rate 1 */
 	{ 0x00000114, 0x0011 }, /* R276 (0x114) - Async sample rate 2 */
-	{ 0x00000120, 0x0305 },
+	{ 0x00000120, 0x0404 },
 	{ 0x00000122, 0x0000 },
 	{ 0x00000149, 0x0000 }, /* R329 (0x149) - Output system clock */
 	{ 0x0000014a, 0x0000 }, /* R330 (0x14A) - Output async clock */
@@ -506,6 +238,7 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000177, 0x0281 }, /* R375 (0x177) - FLL1 Loop Filter Test 1 */
 	{ 0x00000178, 0x0000 },
 	{ 0x00000179, 0x0000 }, /* R377 (0x179) - FLL1 Control 7 */
+	{ 0x0000017a, 0x2906 }, /* R377 (0x17A) - FLL1 Efs 2 */
 	{ 0x00000181, 0x0000 }, /* R385 (0x181) - FLL1 Synchroniser 1 */
 	{ 0x00000182, 0x0000 }, /* R386 (0x182) - FLL1 Synchroniser 2 */
 	{ 0x00000183, 0x0000 }, /* R387 (0x183) - FLL1 Synchroniser 3 */
@@ -514,7 +247,7 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000186, 0x0000 }, /* R390 (0x186) - FLL1 Synchroniser 6 */
 	{ 0x00000187, 0x0001 }, /* R391 (0x187) - FLL1 Synchroniser 7 */
 	{ 0x00000189, 0x0000 }, /* R393 (0x189) - FLL1 Spread Spectrum */
-	{ 0x0000018a, 0x000c }, /* R394 (0x18A) - FLL1 GPIO Clock */
+	{ 0x0000018a, 0x0004 }, /* R394 (0x18A) - FLL1 GPIO Clock */
 	{ 0x00000191, 0x0002 }, /* R401 (0x191) - FLL2 Control 1 */
 	{ 0x00000192, 0x0008 }, /* R402 (0x192) - FLL2 Control 2 */
 	{ 0x00000193, 0x0018 }, /* R403 (0x193) - FLL2 Control 3 */
@@ -524,6 +257,7 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000197, 0x0281 }, /* R407 (0x197) - FLL2 Loop Filter Test 1 */
 	{ 0x00000198, 0x0000 },
 	{ 0x00000199, 0x0000 }, /* R409 (0x199) - FLL2 Control 7 */
+	{ 0x0000019a, 0x2906 }, /* R410 (0x19A) - FLL2 Efs 2 */
 	{ 0x000001a1, 0x0000 }, /* R417 (0x1A1) - FLL2 Synchroniser 1 */
 	{ 0x000001a2, 0x0000 }, /* R418 (0x1A2) - FLL2 Synchroniser 2 */
 	{ 0x000001a3, 0x0000 }, /* R419 (0x1A3) - FLL2 Synchroniser 3 */
@@ -532,97 +266,102 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x000001a6, 0x0000 }, /* R422 (0x1A6) - FLL2 Synchroniser 6 */
 	{ 0x000001a7, 0x0001 }, /* R423 (0x1A7) - FLL2 Synchroniser 7 */
 	{ 0x000001a9, 0x0000 }, /* R425 (0x1A9) - FLL2 Spread Spectrum */
-	{ 0x000001aa, 0x000c }, /* R426 (0x1AA) - FLL2 GPIO Clock */
-	{ 0x000001B1, 0x0002 }, /* R433  - FLL3 Control 1 */
-	{ 0x000001B2, 0x0008 }, /* R434  - FLL3 Control 2 */
-	{ 0x000001B3, 0x0018 }, /* R435  - FLL3 Control 3 */
-	{ 0x000001B4, 0x007D }, /* R436  - FLL3 Control 4 */
-	{ 0x000001B5, 0x0000 }, /* R437  - FLL3 Control 5 */
-	{ 0x000001B6, 0x0000 }, /* R438  - FLL3 Control 6 */
-	{ 0x000001B7, 0x0281 }, /* R439  - FLL3 Loop Filter Test 1 */
-	{ 0x000001B8, 0x0000 }, /* R440  - FLL3 NCO Test 0 */
-	{ 0x000001B9, 0x0000 }, /* R441  - FLL3 Control 7 */
-	{ 0x000001C1, 0x0000 }, /* R449  - FLL3 Synchroniser 1 */
-	{ 0x000001C2, 0x0000 }, /* R450  - FLL3 Synchroniser 2 */
-	{ 0x000001C3, 0x0000 }, /* R451  - FLL3 Synchroniser 3 */
-	{ 0x000001C4, 0x0000 }, /* R452  - FLL3 Synchroniser 4 */
-	{ 0x000001C5, 0x0000 }, /* R453  - FLL3 Synchroniser 5 */
-	{ 0x000001C6, 0x0000 }, /* R454  - FLL3 Synchroniser 6 */
-	{ 0x000001C7, 0x0001 }, /* R455  - FLL3 Synchroniser 7 */
-	{ 0x000001C9, 0x0000 }, /* R457  - FLL3 Spread Spectrum */
-	{ 0x000001CA, 0x000C }, /* R458  - FLL3 GPIO Clock */
+	{ 0x000001aa, 0x0004 }, /* R426 (0x1AA) - FLL2 GPIO Clock */
+	{ 0x000001D1, 0x0004 }, /* R465  - FLLAO_CONTROL_1 */
+	{ 0x000001D2, 0x0004 }, /* R466  - FLLAO_CONTROL_2 */
+	{ 0x000001D3, 0x0000 }, /* R467  - FLLAO_CONTROL_3 */
+	{ 0x000001D4, 0x0000 }, /* R468  - FLLAO_CONTROL_4 */
+	{ 0x000001D5, 0x0001 }, /* R469  - FLLAO_CONTROL_5 */
+	{ 0x000001D6, 0x8004 }, /* R470  - FLLAO_CONTROL_6 */
+	{ 0x000001D8, 0x0000 }, /* R472  - FLLAO_CONTROL_7 */
+	{ 0x000001DA, 0x0070 }, /* R474  - FLLAO_CONTROL_8 */
+	{ 0x000001DB, 0x0000 }, /* R475  - FLLAO_CONTROL_9 */
+	{ 0x000001DC, 0x06DA }, /* R476  - FLLAO_CONTROL_10 */
+	{ 0x000001DD, 0x0011 }, /* R477  - FLLAO_CONTROL_11 */
 	{ 0x00000200, 0x0006 }, /* R512 (0x200) - Mic Charge Pump 1 */
-	{ 0x0000020B, 0x0400 },
-	{ 0x00000210, 0x0184 }, /* R528 (0x210) - LDO1 Control 1 */
 	{ 0x00000213, 0x03e4 }, /* R531 (0x213) - LDO2 Control 1 */
 	{ 0x00000218, 0x00e6 }, /* R536 (0x218) - Mic Bias Ctrl 1 */
 	{ 0x00000219, 0x00e6 }, /* R537 (0x219) - Mic Bias Ctrl 2 */
-	{ 0x0000021a, 0x00e6 }, /* R538 (0x21A) - Mic Bias Ctrl 3 */
-	{ 0x0000021B, 0x00e6 }, /* R539  - Mic Bias Ctrl 4 */
+	{ 0x0000021C, 0x2222 }, /* R540  - Mic Bias Ctrl 5 */
+	{ 0x0000021E, 0x2222 }, /* R542  - Mic Bias Ctrl 6 */
 	{ 0x0000027e, 0x0000 }, /* R638 (0x27E) - Clearwater EDRE HP stereo control */
-	{ 0x00000293, 0x0000 }, /* R659 (0x293) - Accessory Detect Mode 1 */
+	{ 0x00000293, 0x0080 }, /* R659 (0x293) - Accessory Detect Mode 1 */
+	{ 0x00000299, 0x0000 }, /* R665 (0x299) - Headphone Detect 0 */
 	{ 0x0000029b, 0x0000 }, /* R667 (0x29B) - Headphone Detect 1 */
+	{ 0x000002a2, 0x0010 }, /* R674 (0x2A2) - Mic Detect 0 */
 	{ 0x000002a3, 0x1102 }, /* R675 (0x2A3) - Mic Detect 1 */
 	{ 0x000002a4, 0x009f }, /* R676 (0x2A4) - Mic Detect 2 */
-	{ 0x000002a6, 0x3737 },
-	{ 0x000002a7, 0x2c37 },
-	{ 0x000002a8, 0x1422 },
-	{ 0x000002a9, 0x030a },
-	{ 0x000002c3, 0x0000 }, /* R707 (0x2C3) - Mic noise mix control 1 */
+	{ 0x000002a6, 0x3d3d },
+	{ 0x000002a7, 0x3d3d },
+	{ 0x000002a8, 0x333d },
+	{ 0x000002a9, 0x202d },
+	{ 0x000002b2, 0x0010 }, /* R690 (0x2B2) - MicDetect2-0 */
+	{ 0x000002b3, 0x1102 }, /* R691 (0x2B3) - MicDetect2-1 */
+	{ 0x000002b4, 0x009f }, /* R692  (0x2B4) - MicDetect2-2 */
+	{ 0x000002b6, 0x3D3D },
+	{ 0x000002b7, 0x3D3D },
+	{ 0x000002b8, 0x333D },
+	{ 0x000002b9, 0x202D },
 	{ 0x000002c6, 0x0010 },
 	{ 0x000002c8, 0x0000 }, /* R712 (0x2C8) - GP switch 1 */
 	{ 0x000002d3, 0x0000 }, /* R723 (0x2D3) - Jack detect analogue */
-	{ 0x00000300, 0x0000 }, /* R768  - Input Enables */
-	{ 0x00000308, 0x0000 }, /* R776 (0x308) - Input Rate */
+	{ 0x00000300, 0x0000 }, /* R666 (0x300) - input_enable */
+	{ 0x00000308, 0x0400 }, /* R776 (0x308) - Input Rate */
 	{ 0x00000309, 0x0022 }, /* R777 (0x309) - Input Volume Ramp */
 	{ 0x0000030c, 0x0002 }, /* R780 (0x30C) - HPF Control */
 	{ 0x00000310, 0x0080 }, /* R784 (0x310) - IN1L Control */
 	{ 0x00000311, 0x0180 }, /* R785 (0x311) - ADC Digital Volume 1L */
 	{ 0x00000312, 0x0500 }, /* R786 (0x312) - DMIC1L Control */
+	{ 0x00000313, 0x0000 }, /* R787 (0x313) - IN1L Rate Control */
 	{ 0x00000314, 0x0080 }, /* R788 (0x314) - IN1R Control */
 	{ 0x00000315, 0x0180 }, /* R789 (0x315) - ADC Digital Volume 1R */
 	{ 0x00000316, 0x0000 }, /* R790 (0x316) - DMIC1R Control */
+	{ 0x00000317, 0x0000 }, /* R791 (0x317) - IN1R Rate Control */
 	{ 0x00000318, 0x0080 }, /* R792 (0x318) - IN2L Control */
 	{ 0x00000319, 0x0180 }, /* R793 (0x319) - ADC Digital Volume 2L */
 	{ 0x0000031a, 0x0500 }, /* R794 (0x31A) - DMIC2L Control */
+	{ 0x0000031b, 0x0000 }, /* R795 (0x31B) - IN2L Rate Control */
 	{ 0x0000031c, 0x0080 }, /* R796 (0x31C) - IN2R Control */
 	{ 0x0000031d, 0x0180 }, /* R797 (0x31D) - ADC Digital Volume 2R */
 	{ 0x0000031e, 0x0000 }, /* R798 (0x31E) - DMIC2R Control */
-	{ 0x00000320, 0x0080 }, /* R800 (0x320) - IN3L Control */
+	{ 0x0000031f, 0x0000 }, /* R799 (0x31F) - IN2R Rate Control */
+	{ 0x00000320, 0x0000 }, /* R800 (0x320) - IN3L Control */
 	{ 0x00000321, 0x0180 }, /* R801 (0x321) - ADC Digital Volume 3L */
 	{ 0x00000322, 0x0500 }, /* R802 (0x322) - DMIC3L Control */
-	{ 0x00000324, 0x0080 }, /* R804 (0x324) - IN3R Control */
+	{ 0x00000323, 0x0000 }, /* R803 (0x323) - IN3L Rate Control */
+	{ 0x00000324, 0x0000 }, /* R804 (0x324) - IN3R Control */
 	{ 0x00000325, 0x0180 }, /* R805 (0x325) - ADC Digital Volume 3R */
 	{ 0x00000326, 0x0000 }, /* R806 (0x326) - DMIC3R Control */
+	{ 0x00000327, 0x0000 }, /* R807 (0x327) - IN3R Rate Control */
 	{ 0x00000328, 0x0000 }, /* R808 (0x328) - IN4 Control */
 	{ 0x00000329, 0x0180 }, /* R809 (0x329) - ADC Digital Volume 4L */
 	{ 0x0000032a, 0x0500 }, /* R810 (0x32A) - DMIC4L Control */
+	{ 0x0000032b, 0x0000 }, /* R811 (0x32B) - IN4L Rate Control */
 	{ 0x0000032c, 0x0000 }, /* R812 (0x32C) - IN4R Control */
 	{ 0x0000032d, 0x0180 }, /* R813 (0x32D) - ADC Digital Volume 4R */
 	{ 0x0000032e, 0x0000 }, /* R814 (0x32E) - DMIC4R Control */
+	{ 0x0000032f, 0x0000 }, /* R815 (0x32F) - IN4R Rate Control */
 	{ 0x00000330, 0x0000 }, /* R816  - IN5L Control */
 	{ 0x00000331, 0x0180 }, /* R817  - ADC Digital Volume 5L */
 	{ 0x00000332, 0x0500 }, /* R818  - DMIC5L Control */
+	{ 0x00000333, 0x0000 }, /* R819 (0x333) - IN5L Rate Control */
 	{ 0x00000334, 0x0000 }, /* R820  - IN5R Control */
 	{ 0x00000335, 0x0180 }, /* R821  - ADC Digital Volume 5R */
 	{ 0x00000336, 0x0000 }, /* R822  - DMIC5R Control */
-	{ 0x00000338, 0x0000 }, /* R824  - IN6L Control */
-	{ 0x00000339, 0x0180 }, /* R825  - ADC Digital Volume 6L */
-	{ 0x0000033A, 0x0500 }, /* R826  - DMIC6L Control */
-	{ 0x0000033C, 0x0000 }, /* R828  - IN6R Control */
-	{ 0x0000033D, 0x0180 }, /* R829  - ADC Digital Volume 6R */
-	{ 0x0000033E, 0x0000 }, /* R830  - DMIC6R Control */
+	{ 0x00000337, 0x0000 }, /* R823 (0x337) - IN5R Rate Control */
 	{ 0x00000400, 0x0000 }, /* R1024 (0x400) - Output Enables 1 */
 	{ 0x00000408, 0x0000 }, /* R1032 (0x408) - Output Rate 1 */
 	{ 0x00000409, 0x0022 }, /* R1033 (0x409) - Output Volume Ramp */
 	{ 0x00000410, 0x0080 }, /* R1040 (0x410) - Output Path Config 1L */
 	{ 0x00000411, 0x0180 }, /* R1041 (0x411) - DAC Digital Volume 1L */
+	{ 0x00000412, 0x0000 }, /* R1042 (0x412) - moon_out1_config */
 	{ 0x00000413, 0x0001 }, /* R1043 (0x413) - Noise Gate Select 1L */
 	{ 0x00000414, 0x0080 }, /* R1044 (0x414) - Output Path Config 1R */
 	{ 0x00000415, 0x0180 }, /* R1045 (0x415) - DAC Digital Volume 1R */
 	{ 0x00000417, 0x0002 }, /* R1047 (0x417) - Noise Gate Select 1R */
 	{ 0x00000418, 0x0080 }, /* R1048 (0x418) - Output Path Config 2L */
 	{ 0x00000419, 0x0180 }, /* R1049 (0x419) - DAC Digital Volume 2L */
+	{ 0x0000041A, 0x0002 }, /* R1050 (0x41A) - moon_out2_config */
 	{ 0x0000041b, 0x0004 }, /* R1051 (0x41B) - Noise Gate Select 2L */
 	{ 0x0000041c, 0x0080 }, /* R1052 (0x41C) - Output Path Config 2R */
 	{ 0x0000041d, 0x0180 }, /* R1053 (0x41D) - DAC Digital Volume 2R */
@@ -633,38 +372,23 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000424, 0x0080 }, /* R1060 (0x424) - Output Path Config 3R */
 	{ 0x00000425, 0x0180 }, /* R1061 (0x425) - DAC Digital Volume 3R */
 	{ 0x00000427, 0x0020 },
-	{ 0x00000428, 0x0000 }, /* R1064 (0x428) - Output Path Config 4L */
-	{ 0x00000429, 0x0180 }, /* R1065 (0x429) - DAC Digital Volume 4L */
-	{ 0x0000042b, 0x0040 }, /* R1067 (0x42B) - Noise Gate Select 4L */
-	{ 0x0000042c, 0x0000 }, /* R1068 (0x42C) - Output Path Config 4R */
-	{ 0x0000042d, 0x0180 }, /* R1069 (0x42D) - DAC Digital Volume 4R */
-	{ 0x0000042f, 0x0080 }, /* R1071 (0x42F) - Noise Gate Select 4R */
 	{ 0x00000430, 0x0000 }, /* R1072 (0x430) - Output Path Config 5L */
 	{ 0x00000431, 0x0180 }, /* R1073 (0x431) - DAC Digital Volume 5L */
 	{ 0x00000433, 0x0100 }, /* R1075 (0x433) - Noise Gate Select 5L */
 	{ 0x00000434, 0x0000 }, /* R1076 (0x434) - Output Path Config 5R */
 	{ 0x00000435, 0x0180 }, /* R1077 (0x435) - DAC Digital Volume 5R */
 	{ 0x00000437, 0x0200 }, /* R1079 (0x437) - Noise Gate Select 5R */
-	{ 0x00000438, 0x0000 }, /* R1080 (0x438) - Output Path Config 6L */
-	{ 0x00000439, 0x0180 }, /* R1081 (0x439) - DAC Digital Volume 6L */
-	{ 0x0000043b, 0x0400 }, /* R1083 (0x43B) - Noise Gate Select 6L */
-	{ 0x0000043c, 0x0000 }, /* R1084 (0x43C) - Output Path Config 6R */
-	{ 0x0000043d, 0x0180 }, /* R1085 (0x43D) - DAC Digital Volume 6R */
-	{ 0x0000043f, 0x0800 }, /* R1087 (0x43F) - Noise Gate Select 6R */
 	{ 0x00000440, 0x003f }, /* R1088 (0x440) - DRE Enable */
 	{ 0x00000448, 0x003f }, /* R1096 (0x448) - eDRE Enable */
 	{ 0x00000450, 0x0000 }, /* R1104 (0x450) - DAC AEC Control 1 */
-	{ 0x00000451, 0x0000 }, /* R1105  - DAC AEC Control 2 */
 	{ 0x00000458, 0x0000 }, /* R1112 (0x458) - Noise Gate Control */
 	{ 0x00000490, 0x0069 }, /* R1168 (0x490) - PDM SPK1 CTRL 1 */
 	{ 0x00000491, 0x0000 }, /* R1169 (0x491) - PDM SPK1 CTRL 2 */
-	{ 0x00000492, 0x0069 }, /* R1170 (0x492) - PDM SPK2 CTRL 1 */
-	{ 0x00000493, 0x0000 }, /* R1171 (0x493) - PDM SPK2 CTRL 2 */
-	{ 0x000004A0, 0x3210 }, /* R1184  - HP1 Short Circuit Ctrl */
-	{ 0x000004A1, 0x3200 }, /* R1185  - HP2 Short Circuit Ctrl */
-	{ 0x000004A2, 0x3200 }, /* R1186  - HP3 Short Circuit Ctrl */
-	{ 0x000004A8, 0x7020 }, /* R1192  - HP Test Ctrl 5 */
-	{ 0x000004A9, 0x7020 }, /* R1193  - HP Test Ctrl 6 */
+	{ 0x000004A0, 0x3080 }, /* R1184  - HP1 Short Circuit Ctrl */
+	{ 0x000004A1, 0x3000 }, /* R1185  - HP2 Short Circuit Ctrl */
+	{ 0x000004A2, 0x3000 }, /* R1186  - HP3 Short Circuit Ctrl */
+	{ 0x000004A8, 0x7120 }, /* R1192  - HP Test Ctrl 5 */
+	{ 0x000004A9, 0x7120 }, /* R1193  - HP Test Ctrl 6 */
 	{ 0x00000500, 0x000c }, /* R1280 (0x500) - AIF1 BCLK Ctrl */
 	{ 0x00000501, 0x0000 }, /* R1281 (0x501) - AIF1 Tx Pin Ctrl */
 	{ 0x00000502, 0x0000 }, /* R1282 (0x502) - AIF1 Rx Pin Ctrl */
@@ -825,22 +549,6 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x000006ad, 0x0080 },
 	{ 0x000006ae, 0x0000 },
 	{ 0x000006af, 0x0080 },
-	{ 0x000006b0, 0x0000 },
-	{ 0x000006b1, 0x0080 },
-	{ 0x000006b2, 0x0000 },
-	{ 0x000006b3, 0x0080 },
-	{ 0x000006b4, 0x0000 },
-	{ 0x000006b5, 0x0080 },
-	{ 0x000006b6, 0x0000 },
-	{ 0x000006b7, 0x0080 },
-	{ 0x000006b8, 0x0000 },
-	{ 0x000006b9, 0x0080 },
-	{ 0x000006ba, 0x0000 },
-	{ 0x000006bb, 0x0080 },
-	{ 0x000006bc, 0x0000 },
-	{ 0x000006bd, 0x0080 },
-	{ 0x000006be, 0x0000 },
-	{ 0x000006bf, 0x0080 },
 	{ 0x000006c0, 0x0000 },
 	{ 0x000006c1, 0x0080 },
 	{ 0x000006c2, 0x0000 },
@@ -857,22 +565,6 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x000006cd, 0x0080 },
 	{ 0x000006ce, 0x0000 },
 	{ 0x000006cf, 0x0080 },
-	{ 0x000006d0, 0x0000 },
-	{ 0x000006d1, 0x0080 },
-	{ 0x000006d2, 0x0000 },
-	{ 0x000006d3, 0x0080 },
-	{ 0x000006d4, 0x0000 },
-	{ 0x000006d5, 0x0080 },
-	{ 0x000006d6, 0x0000 },
-	{ 0x000006d7, 0x0080 },
-	{ 0x000006d8, 0x0000 },
-	{ 0x000006d9, 0x0080 },
-	{ 0x000006da, 0x0000 },
-	{ 0x000006db, 0x0080 },
-	{ 0x000006dc, 0x0000 },
-	{ 0x000006dd, 0x0080 },
-	{ 0x000006de, 0x0000 },
-	{ 0x000006df, 0x0080 },
 	{ 0x00000700, 0x0000 },
 	{ 0x00000701, 0x0080 },
 	{ 0x00000702, 0x0000 },
@@ -985,22 +677,22 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x0000076d, 0x0080 },
 	{ 0x0000076e, 0x0000 },
 	{ 0x0000076f, 0x0080 },
-	{ 0x00000770, 0x0000 }, /* R1904  - AIF2TX7MIX Input 1 Source */
-	{ 0x00000771, 0x0080 }, /* R1905  - AIF2TX7MIX Input 1 Volume */
-	{ 0x00000772, 0x0000 }, /* R1906  - AIF2TX7MIX Input 2 Source */
-	{ 0x00000773, 0x0080 }, /* R1907  - AIF2TX7MIX Input 2 Volume */
-	{ 0x00000774, 0x0000 }, /* R1908  - AIF2TX7MIX Input 3 Source */
-	{ 0x00000775, 0x0080 }, /* R1909  - AIF2TX7MIX Input 3 Volume */
-	{ 0x00000776, 0x0000 }, /* R1910  - AIF2TX7MIX Input 4 Source */
-	{ 0x00000777, 0x0080 }, /* R1911  - AIF2TX7MIX Input 4 Volume */
-	{ 0x00000778, 0x0000 }, /* R1912  - AIF2TX8MIX Input 1 Source */
-	{ 0x00000779, 0x0080 }, /* R1913  - AIF2TX8MIX Input 1 Volume */
-	{ 0x0000077a, 0x0000 }, /* R1914  - AIF2TX8MIX Input 2 Source */
-	{ 0x0000077b, 0x0080 }, /* R1915  - AIF2TX8MIX Input 2 Volume */
-	{ 0x0000077c, 0x0000 }, /* R1916  - AIF2TX8MIX Input 3 Source */
-	{ 0x0000077d, 0x0080 }, /* R1917  - AIF2TX8MIX Input 3 Volume */
-	{ 0x0000077e, 0x0000 }, /* R1918  - AIF2TX8MIX Input 4 Source */
-	{ 0x0000077f, 0x0080 }, /* R1919  - AIF2TX8MIX Input 4 Volume */
+	{ 0x00000770, 0x0000 },
+	{ 0x00000771, 0x0080 },
+	{ 0x00000772, 0x0000 },
+	{ 0x00000773, 0x0080 },
+	{ 0x00000774, 0x0000 },
+	{ 0x00000775, 0x0080 },
+	{ 0x00000776, 0x0000 },
+	{ 0x00000777, 0x0080 },
+	{ 0x00000778, 0x0000 },
+	{ 0x00000779, 0x0080 },
+	{ 0x0000077a, 0x0000 },
+	{ 0x0000077b, 0x0080 },
+	{ 0x0000077c, 0x0000 },
+	{ 0x0000077d, 0x0080 },
+	{ 0x0000077e, 0x0000 },
+	{ 0x0000077f, 0x0080 },
 	{ 0x00000780, 0x0000 },
 	{ 0x00000781, 0x0080 },
 	{ 0x00000782, 0x0000 },
@@ -1383,6 +1075,14 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000c68, 0x0000 },
 	{ 0x00000c70, 0x0000 },
 	{ 0x00000c78, 0x0000 },
+	{ 0x00000dc0, 0x0000 },
+	{ 0x00000dc8, 0x0000 },
+	{ 0x00000dd0, 0x0000 },
+	{ 0x00000dd8, 0x0000 },
+	{ 0x00000de0, 0x0000 },
+	{ 0x00000de8, 0x0000 },
+	{ 0x00000df0, 0x0000 },
+	{ 0x00000df8, 0x0000 },
 	{ 0x00000e00, 0x0000 }, /* R3584 (0xE00) - FX_Ctrl1 */
 	{ 0x00000e10, 0x6318 }, /* R3600 (0xE10) - EQ1_1 */
 	{ 0x00000e11, 0x6300 }, /* R3601 (0xE11) - EQ1_2 */
@@ -1473,11 +1173,11 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000e82, 0x0018 }, /* R3714 (0xE82) - DRC1 ctrl3 */
 	{ 0x00000e83, 0x0000 }, /* R3715 (0xE83) - DRC1 ctrl4 */
 	{ 0x00000e84, 0x0000 }, /* R3716 (0xE84) - DRC1 ctrl5 */
-	{ 0x00000e88, 0x0933 }, /* R3720 (0xE88) - DRC2 ctrl1 */
-	{ 0x00000e89, 0x0018 }, /* R3721 (0xE89) - DRC2 ctrl2 */
-	{ 0x00000e8a, 0x0000 }, /* R3722 (0xE8A) - DRC2 ctrl3 */
+	{ 0x00000e88, 0x0018 }, /* R3720 (0xE88) - DRC2 ctrl1 */
+	{ 0x00000e89, 0x0933 }, /* R3721 (0xE89) - DRC2 ctrl2 */
+	{ 0x00000e8a, 0x0018 }, /* R3722 (0xE8A) - DRC2 ctrl3 */
 	{ 0x00000e8b, 0x0000 }, /* R3723 (0xE8B) - DRC2 ctrl4 */
-	{ 0x00000e8c, 0x0040 }, /* R3724 (0xE8C) - DRC2 ctrl5 */
+	{ 0x00000e8c, 0x0000 }, /* R3724 (0xE8C) - DRC2 ctrl5 */
 	{ 0x00000ec0, 0x0000 }, /* R3776 (0xEC0) - HPLPF1_1 */
 	{ 0x00000ec1, 0x0000 }, /* R3777 (0xEC1) - HPLPF1_2 */
 	{ 0x00000ec4, 0x0000 }, /* R3780 (0xEC4) - HPLPF2_1 */
@@ -1685,16 +1385,16 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00000FC3, 0x0000 }, /* R4035  - ANC Coefficient */
 	{ 0x00000FC4, 0x0000 }, /* R4036  - ANC Coefficient */
 	{ 0x00000FC5, 0x0000 }, /* R4037  - ANC Coefficient */
-	{ 0x00001300, 0x0000 }, /* R4864  - DAC Comp 1 */
-	{ 0x00001302, 0x0000 }, /* R4866  - DAC Comp 2 */
-	{ 0x00001380, 0x0000 },
-	{ 0x00001381, 0x0000 },
-	{ 0x00001382, 0x0000 },
-	{ 0x00001383, 0x0000 },
-	{ 0x00001390, 0x0000 },
-	{ 0x00001391, 0x0000 },
-	{ 0x00001392, 0x0000 },
-	{ 0x00001393, 0x0000 },
+	{ 0x00001300, 0x050E }, /* R4864  - DAC Comp 1 */
+	{ 0x00001302, 0x0101 }, /* R4866  - DAC Comp 2 */
+	{ 0x00001380, 0x0425 },
+	{ 0x00001381, 0xF6D8 },
+	{ 0x00001382, 0x0632 },
+	{ 0x00001383, 0xFEC8 },
+	{ 0x00001390, 0x042F },
+	{ 0x00001391, 0xF6CA },
+	{ 0x00001392, 0x0637 },
+	{ 0x00001393, 0xFEC8 },
 	{ 0x000013a0, 0x0000 },
 	{ 0x000013a1, 0x0000 },
 	{ 0x000013a2, 0x0000 },
@@ -1711,14 +1411,6 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x000013d1, 0x0000 },
 	{ 0x000013d2, 0x0000 },
 	{ 0x000013d3, 0x0000 },
-	{ 0x000013e0, 0x0000 },
-	{ 0x000013e1, 0x0000 },
-	{ 0x000013e2, 0x0000 },
-	{ 0x000013e3, 0x0000 },
-	{ 0x000013f0, 0x0000 },
-	{ 0x000013f1, 0x0000 },
-	{ 0x000013f2, 0x0000 },
-	{ 0x000013f3, 0x0000 },
 	{ 0x00001400, 0x0000 },
 	{ 0x00001401, 0x0000 },
 	{ 0x00001402, 0x0000 },
@@ -1727,88 +1419,111 @@ static const struct reg_default clearwater_reg_default[] = {
 	{ 0x00001411, 0x0000 },
 	{ 0x00001412, 0x0000 },
 	{ 0x00001413, 0x0000 },
-	{ 0x00001420, 0x0000 },
-	{ 0x00001421, 0x0000 },
-	{ 0x00001422, 0x0000 },
-	{ 0x00001423, 0x0000 },
-	{ 0x00001430, 0x0000 },
-	{ 0x00001431, 0x0000 },
-	{ 0x00001432, 0x0000 },
-	{ 0x00001433, 0x0000 },
-	{ 0x00001701, 0xE000 }, /* R5889  - GPIO1 Control 2 */
-	{ 0x00001703, 0xE000 }, /* R5891  - GPIO2 Control 2 */
-	{ 0x00001705, 0xE000 }, /* R5893  - GPIO3 Control 2 */
-	{ 0x00001707, 0xE000 }, /* R5895  - GPIO4 Control 2 */
-	{ 0x00001709, 0xE000 }, /* R5897  - GPIO5 Control 2 */
-	{ 0x0000170B, 0xE000 }, /* R5899  - GPIO6 Control 2 */
-	{ 0x0000170D, 0xE000 }, /* R5901  - GPIO7 Control 2 */
-	{ 0x0000170F, 0xE000 }, /* R5903  - GPIO8 Control 2 */
-	{ 0x00001711, 0xE000 }, /* R5905  - GPIO9 Control 2 */
-	{ 0x00001713, 0xE000 }, /* R5907  - GPIO10 Control 2 */
-	{ 0x00001715, 0xE000 }, /* R5909  - GPIO11 Control 2 */
-	{ 0x00001717, 0xE000 }, /* R5911  - GPIO12 Control 2 */
-	{ 0x00001719, 0xE000 }, /* R5913  - GPIO13 Control 2 */
-	{ 0x0000171B, 0xE000 }, /* R5915  - GPIO14 Control 2 */
-	{ 0x0000171D, 0xE000 }, /* R5917  - GPIO15 Control 2 */
-	{ 0x0000171F, 0xE000 }, /* R5919  - GPIO16 Control 2 */
-	{ 0x00001721, 0xE000 }, /* R5921  - GPIO17 Control 2 */
-	{ 0x00001723, 0xE000 }, /* R5923  - GPIO18 Control 2 */
-	{ 0x00001725, 0xE000 }, /* R5925  - GPIO19 Control 2 */
-	{ 0x00001727, 0xE000 }, /* R5927  - GPIO20 Control 2 */
-	{ 0x00001729, 0xE000 }, /* R5929  - GPIO21 Control 2 */
-	{ 0x0000172B, 0xE000 }, /* R5931  - GPIO22 Control 2 */
-	{ 0x0000172D, 0xE000 }, /* R5933  - GPIO23 Control 2 */
-	{ 0x0000172F, 0xE000 }, /* R5935  - GPIO24 Control 2 */
-	{ 0x00001731, 0xE000 }, /* R5937  - GPIO25 Control 2 */
-	{ 0x00001733, 0xE000 }, /* R5939  - GPIO26 Control 2 */
-	{ 0x00001735, 0xE000 }, /* R5941  - GPIO27 Control 2 */
-	{ 0x00001737, 0xE000 }, /* R5943  - GPIO28 Control 2 */
-	{ 0x00001739, 0xE000 }, /* R5945  - GPIO29 Control 2 */
-	{ 0x0000173B, 0xE000 }, /* R5947  - GPIO30 Control 2 */
-	{ 0x0000173D, 0xE000 }, /* R5949  - GPIO31 Control 2 */
-	{ 0x0000173F, 0xE000 }, /* R5951  - GPIO32 Control 2 */
-	{ 0x00001741, 0xE000 }, /* R5953  - GPIO33 Control 2 */
-	{ 0x00001743, 0xE000 }, /* R5955  - GPIO34 Control 2 */
-	{ 0x00001745, 0xE000 }, /* R5957  - GPIO35 Control 2 */
-	{ 0x00001747, 0xE000 }, /* R5959  - GPIO36 Control 2 */
-	{ 0x00001749, 0xE000 }, /* R5961  - GPIO37 Control 2 */
-	{ 0x0000174B, 0xE000 }, /* R5963  - GPIO38 Control 2 */
-	{ 0x0000174D, 0xE000 }, /* R5965  - GPIO39 Control 2 */
-	{ 0x0000174F, 0xE000 }, /* R5967  - GPIO40 Control 2 */
-	{ 0x00001802, 0x0000 },
-	{ 0x00001803, 0x0000 },
-	{ 0x00001804, 0x0000 },
-	{ 0x00001807, 0x0000 },
-	{ 0x00001809, 0x0000 },
-	{ 0x0000180F, 0x0000 },
-	{ 0x00001813, 0x0000 },
-	{ 0x00001819, 0x0000 },
-	{ 0x0000181C, 0x0000 },
-	{ 0x00001840, 0xFFFF }, /* R6208  - IRQ1 Mask 1 */
-	{ 0x00001841, 0xFFFF }, /* R6209  - IRQ1 Mask 2 */
+	{ 0x00001480, 0x0000 }, /*R5248 - DFC1_CTRL*/
+	{ 0x00001482, 0x1F00 }, /*R5250 - DFC1_RX*/
+	{ 0x00001484, 0x1F00 }, /*R5252 - DFC1_TX*/
+	{ 0x00001486, 0x0000 },
+	{ 0x00001488, 0x1F00 },
+	{ 0x0000148A, 0x1F00 },
+	{ 0x0000148C, 0x0000 },
+	{ 0x0000148E, 0x1F00 },
+	{ 0x00001490, 0x1F00 },
+	{ 0x00001492, 0x0000 },
+	{ 0x00001494, 0x1F00 },
+	{ 0x00001496, 0x1F00 },
+	{ 0x00001498, 0x0000 },
+	{ 0x0000149A, 0x1F00 },
+	{ 0x0000149C, 0x1F00 },
+	{ 0x0000149E, 0x0000 },
+	{ 0x000014A0, 0x1F00 },
+	{ 0x000014A2, 0x1F00 },
+	{ 0x000014A4, 0x0000 },
+	{ 0x000014A6, 0x1F00 },
+	{ 0x000014A8, 0x1F00 },
+	{ 0x000014AA, 0x0000 },
+	{ 0x000014AC, 0x1F00 },
+	{ 0x000014AE, 0x1F00 }, /*R5294  -  DFC8_TX */
+	{ 0x00001701, 0xF000 }, /* R5889  - GPIO1 Control 2 */
+	{ 0x00001703, 0xF000 }, /* R5891  - GPIO2 Control 2 */
+	{ 0x00001705, 0xF000 }, /* R5893  - GPIO3 Control 2 */
+	{ 0x00001707, 0xF000 }, /* R5895  - GPIO4 Control 2 */
+	{ 0x00001709, 0xF000 }, /* R5897  - GPIO5 Control 2 */
+	{ 0x0000170B, 0xF000 }, /* R5899  - GPIO6 Control 2 */
+	{ 0x0000170D, 0xF000 }, /* R5901  - GPIO7 Control 2 */
+	{ 0x0000170F, 0xF000 }, /* R5903  - GPIO8 Control 2 */
+	{ 0x00001711, 0xF000 }, /* R5905  - GPIO9 Control 2 */
+	{ 0x00001713, 0xF000 }, /* R5907  - GPIO10 Control 2 */
+	{ 0x00001715, 0xF000 }, /* R5909  - GPIO11 Control 2 */
+	{ 0x00001717, 0xF000 }, /* R5911  - GPIO12 Control 2 */
+	{ 0x00001719, 0xF000 }, /* R5913  - GPIO13 Control 2 */
+	{ 0x0000171B, 0xF000 }, /* R5915  - GPIO14 Control 2 */
+	{ 0x0000171D, 0xF000 }, /* R5917  - GPIO15 Control 2 */
+	{ 0x0000171F, 0xF000 }, /* R5919  - GPIO16 Control 2 */
+	{ 0x00001721, 0xF000 }, /* R5921  - GPIO17 Control 2 */
+	{ 0x00001723, 0xF000 }, /* R5923  - GPIO18 Control 2 */
+	{ 0x00001725, 0xF000 }, /* R5925  - GPIO19 Control 2 */
+	{ 0x00001727, 0xF000 }, /* R5927  - GPIO20 Control 2 */
+	{ 0x00001729, 0xF000 }, /* R5929  - GPIO21 Control 2 */
+	{ 0x0000172B, 0xF000 }, /* R5931  - GPIO22 Control 2 */
+	{ 0x0000172D, 0xF000 }, /* R5933  - GPIO23 Control 2 */
+	{ 0x0000172F, 0xF000 }, /* R5935  - GPIO24 Control 2 */
+	{ 0x00001731, 0xF000 }, /* R5937  - GPIO25 Control 2 */
+	{ 0x00001733, 0xF000 }, /* R5939  - GPIO26 Control 2 */
+	{ 0x00001735, 0xF000 }, /* R5941  - GPIO27 Control 2 */
+	{ 0x00001737, 0xF000 }, /* R5943  - GPIO28 Control 2 */
+	{ 0x00001739, 0xF000 }, /* R5945  - GPIO29 Control 2 */
+	{ 0x0000173B, 0xF000 }, /* R5947  - GPIO30 Control 2 */
+	{ 0x0000173D, 0xF000 }, /* R5949  - GPIO31 Control 2 */
+	{ 0x0000173F, 0xF000 }, /* R5951  - GPIO32 Control 2 */
+	{ 0x00001741, 0xF000 }, /* R5953  - GPIO33 Control 2 */
+	{ 0x00001743, 0xF000 }, /* R5955  - GPIO34 Control 2 */
+	{ 0x00001745, 0xF000 }, /* R5957  - GPIO35 Control 2 */
+	{ 0x00001747, 0xF000 }, /* R5959  - GPIO36 Control 2 */
+	{ 0x00001749, 0xF000 }, /* R5961  - GPIO37 Control 2 */
+	{ 0x0000174B, 0xF000 }, /* R5963  - GPIO38 Control 2 */
+	{ 0x00001840, 0x9200 }, /* R6208  - IRQ1 Mask 1 */
+	{ 0x00001841, 0xFB00 }, /* R6209  - IRQ1 Mask 2 */
 	{ 0x00001842, 0xFFFF }, /* R6210  - IRQ1 Mask 3 */
 	{ 0x00001843, 0xFFFF }, /* R6211  - IRQ1 Mask 4 */
 	{ 0x00001844, 0xFFFF }, /* R6212  - IRQ1 Mask 5 */
-	{ 0x00001845, 0xFFFF }, /* R6213  - IRQ1 Mask 6 */
-	{ 0x00001846, 0xFFFF }, /* R6214  - IRQ1 Mask 7 */
+	{ 0x00001845, 0x0301 }, /* R6213  - IRQ1 Mask 6 */
+	{ 0x00001846, 0x003F }, /* R6214  - IRQ1 Mask 7 */
 	{ 0x00001847, 0xFFFF }, /* R6215  - IRQ1 Mask 8 */
-	{ 0x00001848, 0xFFFF }, /* R6216  - IRQ1 Mask 9 */
+	{ 0x00001848, 0x0F07 }, /* R6216  - IRQ1 Mask 9 */
 	{ 0x00001849, 0xFFFF }, /* R6217  - IRQ1 Mask 10 */
 	{ 0x0000184A, 0xFFFF }, /* R6218  - IRQ1 Mask 11 */
-	{ 0x0000184B, 0xFFFF }, /* R6219  - IRQ1 Mask 12 */
-	{ 0x0000184C, 0xFFFF }, /* R6220  - IRQ1 Mask 13 */
-	{ 0x0000184D, 0xFFFF }, /* R6221  - IRQ1 Mask 14 */
+	{ 0x0000184B, 0x003F }, /* R6219  - IRQ1 Mask 12 */
+	{ 0x0000184C, 0x003F }, /* R6220  - IRQ1 Mask 13 */
+	{ 0x0000184D, 0x003F }, /* R6221  - IRQ1 Mask 14 */
 	{ 0x0000184E, 0xFFFF }, /* R6222  - IRQ1 Mask 15 */
-	{ 0x00001948, 0xFFFF }, /* R6472  - IRQ2 Mask 9 */
-	{ 0x00001A06, 0x0000 }, /* R6662  - Interrupt Debounce 7 */
+	{ 0x0000184F, 0xFFFF }, /* R6223  - IRQ1 Mask 16 */
+	{ 0x00001850, 0xFFFF }, /* R6224  - IRQ1 Mask 17 */
+	{ 0x00001851, 0xFFFF }, /* R6225  - IRQ1 Mask 18 */
+	{ 0x00001852, 0x003F }, /* R6226  - IRQ1 Mask 19 */
+	{ 0x00001853, 0xFFFF }, /* R6227  - IRQ1 Mask 20 */
+	{ 0x00001854, 0x00FF }, /* R6228  - IRQ1 Mask 21 */
+	{ 0x00001855, 0x00FF }, /* R6229  - IRQ1 Mask 22 */
+	{ 0x00001856, 0x00FF }, /* R6230  - IRQ1 Mask 23 */
+	{ 0x00001857, 0x00FF }, /* R6231  - IRQ1 Mask 24 */
+	{ 0x00001858, 0x007F }, /* R6232  - IRQ1 Mask 25 */
+	{ 0x00001859, 0xFFFF }, /* R6233  - IRQ1 Mask 26 */
+	{ 0x0000185A, 0x007F }, /* R6234  - IRQ1 Mask 27 */
+	{ 0x0000185B, 0x007F }, /* R6235  - IRQ1 Mask 28 */
+	{ 0x0000185C, 0xFFFF }, /* R6236  - IRQ1 Mask 29 */
+	{ 0x0000185D, 0x007F }, /* R6237  - IRQ1 Mask 30 */
+	{ 0x0000185E, 0x0007 }, /* R6238  - IRQ1 Mask 31 */
+	{ 0x0000185F, 0x0007 }, /* R6239  - IRQ1 Mask 32 */
+	{ 0x00001860, 0x007F }, /* R6240  - IRQ1 Mask 33 */
+	{ 0x00001948, 0x0F07 }, /* R6472  - IRQ2 Mask 9 */
+	{ 0x00001A06, 0x0000 }, /* R6662 - Interrupt Debounce 7 */
 	{ 0x00001A80, 0x4400 }, /* R6784  - IRQ1 CTRL */
 };
 
-static bool clearwater_is_adsp_memory(struct device *dev, unsigned int reg)
+static bool moon_is_adsp_memory(struct device *dev, unsigned int reg)
 {
-	if ((reg >= 0x080000 && reg <= 0x085ffe) ||
-	    (reg >= 0x0a0000 && reg <= 0x0a7ffe) ||
-	    (reg >= 0x0c0000 && reg <= 0x0c1ffe) ||
+	if ((reg >= 0x080000 && reg <= 0x088ffe) ||
+	    (reg >= 0x0a0000 && reg <= 0x0a9ffe) ||
+	    (reg >= 0x0c0000 && reg <= 0x0c3ffe) ||
 	    (reg >= 0x0e0000 && reg <= 0x0e1ffe) ||
 	    (reg >= 0x100000 && reg <= 0x10effe) ||
 	    (reg >= 0x120000 && reg <= 0x12bffe) ||
@@ -1821,30 +1536,29 @@ static bool clearwater_is_adsp_memory(struct device *dev, unsigned int reg)
 	    (reg >= 0x1c0000 && reg <= 0x1cbffe) ||
 	    (reg >= 0x1e0000 && reg <= 0x1e1ffe) ||
 	    (reg >= 0x200000 && reg <= 0x208ffe) ||
-	    (reg >= 0x220000 && reg <= 0x231ffe) ||
-	    (reg >= 0x240000 && reg <= 0x24bffe) ||
+	    (reg >= 0x220000 && reg <= 0x229ffe) ||
+	    (reg >= 0x240000 && reg <= 0x243ffe) ||
 	    (reg >= 0x260000 && reg <= 0x261ffe) ||
 	    (reg >= 0x280000 && reg <= 0x288ffe) ||
 	    (reg >= 0x2a0000 && reg <= 0x2a9ffe) ||
 	    (reg >= 0x2c0000 && reg <= 0x2c3ffe) ||
 	    (reg >= 0x2e0000 && reg <= 0x2e1ffe) ||
-	    (reg >= 0x300000 && reg <= 0x305ffe) ||
+	    (reg >= 0x300000 && reg <= 0x308ffe) ||
 	    (reg >= 0x320000 && reg <= 0x333ffe) ||
-	    (reg >= 0x340000 && reg <= 0x34bffe) ||
+	    (reg >= 0x340000 && reg <= 0x353ffe) ||
 	    (reg >= 0x360000 && reg <= 0x361ffe) ||
 	    (reg >= 0x380000 && reg <= 0x388ffe) ||
-	    (reg >= 0x3a0000 && reg <= 0x3a7ffe) ||
-	    (reg >= 0x3c0000 && reg <= 0x3c1ffe) ||
+	    (reg >= 0x3a0000 && reg <= 0x3b3ffe) ||
+	    (reg >= 0x3c0000 && reg <= 0x3d3ffe) ||
 	    (reg >= 0x3e0000 && reg <= 0x3e1ffe))
 		return true;
 	else
 		return false;
 }
 
-static bool clearwater_16bit_readable_register(struct device *dev, unsigned int reg)
+static bool moon_16bit_readable_register(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
-	case 0x2C2:
 	case ARIZONA_SOFTWARE_RESET:
 	case ARIZONA_DEVICE_REVISION:
 	case ARIZONA_CTRL_IF_SPI_CFG_1:
@@ -1911,6 +1625,7 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_FLL1_CONTROL_5:
 	case ARIZONA_FLL1_CONTROL_6:
 	case ARIZONA_FLL1_CONTROL_7:
+	case ARIZONA_FLL1_EFS_2:
 	case ARIZONA_FLL1_LOOP_FILTER_TEST_1:
 	case ARIZONA_FLL1_NCO_TEST_0:
 	case ARIZONA_FLL1_SYNCHRONISER_1:
@@ -1929,6 +1644,7 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_FLL2_CONTROL_5:
 	case ARIZONA_FLL2_CONTROL_6:
 	case ARIZONA_FLL2_CONTROL_7:
+	case ARIZONA_FLL2_EFS_2:
 	case ARIZONA_FLL2_LOOP_FILTER_TEST_1:
 	case ARIZONA_FLL2_NCO_TEST_0:
 	case ARIZONA_FLL2_SYNCHRONISER_1:
@@ -1940,47 +1656,38 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_FLL2_SYNCHRONISER_7:
 	case ARIZONA_FLL2_SPREAD_SPECTRUM:
 	case ARIZONA_FLL2_GPIO_CLOCK:
-	case ARIZONA_FLL3_CONTROL_1:
-	case ARIZONA_FLL3_CONTROL_2:
-	case ARIZONA_FLL3_CONTROL_3:
-	case ARIZONA_FLL3_CONTROL_4:
-	case ARIZONA_FLL3_CONTROL_5:
-	case ARIZONA_FLL3_CONTROL_6:
-	case ARIZONA_FLL3_CONTROL_7:
-	case ARIZONA_FLL3_LOOP_FILTER_TEST_1:
-	case ARIZONA_FLL3_NCO_TEST_0:
-	case ARIZONA_FLL3_SYNCHRONISER_1:
-	case ARIZONA_FLL3_SYNCHRONISER_2:
-	case ARIZONA_FLL3_SYNCHRONISER_3:
-	case ARIZONA_FLL3_SYNCHRONISER_4:
-	case ARIZONA_FLL3_SYNCHRONISER_5:
-	case ARIZONA_FLL3_SYNCHRONISER_6:
-	case ARIZONA_FLL3_SYNCHRONISER_7:
-	case ARIZONA_FLL3_SPREAD_SPECTRUM:
-	case ARIZONA_FLL3_GPIO_CLOCK:
+	case MOON_FLLAO_CONTROL_1:
+	case MOON_FLLAO_CONTROL_2:
+	case MOON_FLLAO_CONTROL_3:
+	case MOON_FLLAO_CONTROL_4:
+	case MOON_FLLAO_CONTROL_5:
+	case MOON_FLLAO_CONTROL_6:
+	case MOON_FLLAO_CONTROL_7:
+	case MOON_FLLAO_CONTROL_8:
+	case MOON_FLLAO_CONTROL_9:
+	case MOON_FLLAO_CONTROL_10:
+	case MOON_FLLAO_CONTROL_11:
 	case ARIZONA_MIC_CHARGE_PUMP_1:
-	case CLEARWATER_CP_MODE:
-	case ARIZONA_LDO1_CONTROL_1:
 	case ARIZONA_LDO2_CONTROL_1:
 	case ARIZONA_MIC_BIAS_CTRL_1:
 	case ARIZONA_MIC_BIAS_CTRL_2:
-	case ARIZONA_MIC_BIAS_CTRL_3:
-	case ARIZONA_MIC_BIAS_CTRL_4:
+	case ARIZONA_MIC_BIAS_CTRL_5:
+	case ARIZONA_MIC_BIAS_CTRL_6:
 	case ARIZONA_HP_CTRL_1L:
 	case ARIZONA_HP_CTRL_1R:
 	case ARIZONA_HP_CTRL_2L:
 	case ARIZONA_HP_CTRL_2R:
 	case ARIZONA_HP_CTRL_3L:
 	case ARIZONA_HP_CTRL_3R:
-	case ARIZONA_DCS_HP1L_CONTROL:
-	case ARIZONA_DCS_HP1R_CONTROL:
 	case CLEARWATER_EDRE_HP_STEREO_CONTROL:
 	case ARIZONA_ACCESSORY_DETECT_MODE_1:
+	case MOON_HEADPHONE_DETECT_0:
 	case ARIZONA_HEADPHONE_DETECT_1:
 	case ARIZONA_HEADPHONE_DETECT_2:
 	case ARIZONA_HEADPHONE_DETECT_3:
 	case ARIZONA_HP_DACVAL:
 	case CLEARWATER_MICD_CLAMP_CONTROL:
+	case MOON_MIC_DETECT_0:
 	case ARIZONA_MIC_DETECT_1:
 	case ARIZONA_MIC_DETECT_2:
 	case ARIZONA_MIC_DETECT_3:
@@ -1989,7 +1696,15 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_MIC_DETECT_LEVEL_2:
 	case ARIZONA_MIC_DETECT_LEVEL_3:
 	case ARIZONA_MIC_DETECT_LEVEL_4:
-	case ARIZONA_MIC_NOISE_MIX_CONTROL_1:
+	case MOON_MICDET2_CONTROL_0:
+	case MOON_MICDET2_CONTROL_1:
+	case MOON_MICDET2_CONTROL_2:
+	case MOON_MICDET2_CONTROL_3:
+	case MOON_MICDET2_CONTROL_4:
+	case MOON_MICDET2_LEVEL_1:
+	case MOON_MICDET2_LEVEL_2:
+	case MOON_MICDET2_LEVEL_3:
+	case MOON_MICDET2_LEVEL_4:
 	case CLEARWATER_GP_SWITCH_1:
 	case ARIZONA_JACK_DETECT_ANALOGUE:
 	case ARIZONA_INPUT_ENABLES:
@@ -2000,39 +1715,43 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_IN1L_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_1L:
 	case ARIZONA_DMIC1L_CONTROL:
+	case MOON_IN1L_RATE_CONTROL:
 	case ARIZONA_IN1R_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_1R:
 	case ARIZONA_DMIC1R_CONTROL:
+	case MOON_IN1R_RATE_CONTROL:
 	case ARIZONA_IN2L_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_2L:
 	case ARIZONA_DMIC2L_CONTROL:
+	case MOON_IN2L_RATE_CONTROL:
 	case ARIZONA_IN2R_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_2R:
 	case ARIZONA_DMIC2R_CONTROL:
+	case MOON_IN2R_RATE_CONTROL:
 	case ARIZONA_IN3L_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_3L:
 	case ARIZONA_DMIC3L_CONTROL:
+	case MOON_IN3L_RATE_CONTROL:
 	case ARIZONA_IN3R_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_3R:
 	case ARIZONA_DMIC3R_CONTROL:
+	case MOON_IN3R_RATE_CONTROL:
 	case ARIZONA_IN4L_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_4L:
 	case ARIZONA_DMIC4L_CONTROL:
+	case MOON_IN4L_RATE_CONTROL:
 	case ARIZONA_IN4R_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_4R:
 	case ARIZONA_DMIC4R_CONTROL:
+	case MOON_IN4R_RATE_CONTROL:
 	case ARIZONA_IN5L_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_5L:
 	case ARIZONA_DMIC5L_CONTROL:
+	case MOON_IN5L_RATE_CONTROL:
 	case ARIZONA_IN5R_CONTROL:
 	case ARIZONA_ADC_DIGITAL_VOLUME_5R:
 	case ARIZONA_DMIC5R_CONTROL:
-	case ARIZONA_IN6L_CONTROL:
-	case ARIZONA_ADC_DIGITAL_VOLUME_6L:
-	case ARIZONA_DMIC6L_CONTROL:
-	case ARIZONA_IN6R_CONTROL:
-	case ARIZONA_ADC_DIGITAL_VOLUME_6R:
-	case ARIZONA_DMIC6R_CONTROL:
+	case MOON_IN5R_RATE_CONTROL:
 	case ARIZONA_OUTPUT_ENABLES_1:
 	case ARIZONA_OUTPUT_STATUS_1:
 	case ARIZONA_RAW_OUTPUT_STATUS_1:
@@ -2040,12 +1759,14 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_OUTPUT_VOLUME_RAMP:
 	case ARIZONA_OUTPUT_PATH_CONFIG_1L:
 	case ARIZONA_DAC_DIGITAL_VOLUME_1L:
+	case MOON_OUT1_CONFIG:
 	case ARIZONA_NOISE_GATE_SELECT_1L:
 	case ARIZONA_OUTPUT_PATH_CONFIG_1R:
 	case ARIZONA_DAC_DIGITAL_VOLUME_1R:
 	case ARIZONA_NOISE_GATE_SELECT_1R:
 	case ARIZONA_OUTPUT_PATH_CONFIG_2L:
 	case ARIZONA_DAC_DIGITAL_VOLUME_2L:
+	case MOON_OUT2_CONFIG:
 	case ARIZONA_NOISE_GATE_SELECT_2L:
 	case ARIZONA_OUTPUT_PATH_CONFIG_2R:
 	case ARIZONA_DAC_DIGITAL_VOLUME_2R:
@@ -2056,33 +1777,18 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_OUTPUT_PATH_CONFIG_3R:
 	case ARIZONA_DAC_DIGITAL_VOLUME_3R:
 	case ARIZONA_NOISE_GATE_SELECT_3R:
-	case ARIZONA_OUTPUT_PATH_CONFIG_4L:
-	case ARIZONA_DAC_DIGITAL_VOLUME_4L:
-	case ARIZONA_NOISE_GATE_SELECT_4L:
-	case ARIZONA_OUTPUT_PATH_CONFIG_4R:
-	case ARIZONA_DAC_DIGITAL_VOLUME_4R:
-	case ARIZONA_NOISE_GATE_SELECT_4R:
 	case ARIZONA_OUTPUT_PATH_CONFIG_5L:
 	case ARIZONA_DAC_DIGITAL_VOLUME_5L:
 	case ARIZONA_NOISE_GATE_SELECT_5L:
 	case ARIZONA_OUTPUT_PATH_CONFIG_5R:
 	case ARIZONA_DAC_DIGITAL_VOLUME_5R:
 	case ARIZONA_NOISE_GATE_SELECT_5R:
-	case ARIZONA_OUTPUT_PATH_CONFIG_6L:
-	case ARIZONA_DAC_DIGITAL_VOLUME_6L:
-	case ARIZONA_NOISE_GATE_SELECT_6L:
-	case ARIZONA_OUTPUT_PATH_CONFIG_6R:
-	case ARIZONA_DAC_DIGITAL_VOLUME_6R:
-	case ARIZONA_NOISE_GATE_SELECT_6R:
 	case ARIZONA_DRE_ENABLE:
 	case CLEARWATER_EDRE_ENABLE:
 	case ARIZONA_DAC_AEC_CONTROL_1:
-	case ARIZONA_DAC_AEC_CONTROL_2:
 	case ARIZONA_NOISE_GATE_CONTROL:
 	case ARIZONA_PDM_SPK1_CTRL_1:
 	case ARIZONA_PDM_SPK1_CTRL_2:
-	case ARIZONA_PDM_SPK2_CTRL_1:
-	case ARIZONA_PDM_SPK2_CTRL_2:
 	case ARIZONA_HP1_SHORT_CIRCUIT_CTRL:
 	case ARIZONA_HP2_SHORT_CIRCUIT_CTRL:
 	case ARIZONA_HP3_SHORT_CIRCUIT_CTRL:
@@ -2253,22 +1959,6 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_OUT3RMIX_INPUT_3_VOLUME:
 	case ARIZONA_OUT3RMIX_INPUT_4_SOURCE:
 	case ARIZONA_OUT3RMIX_INPUT_4_VOLUME:
-	case ARIZONA_OUT4LMIX_INPUT_1_SOURCE:
-	case ARIZONA_OUT4LMIX_INPUT_1_VOLUME:
-	case ARIZONA_OUT4LMIX_INPUT_2_SOURCE:
-	case ARIZONA_OUT4LMIX_INPUT_2_VOLUME:
-	case ARIZONA_OUT4LMIX_INPUT_3_SOURCE:
-	case ARIZONA_OUT4LMIX_INPUT_3_VOLUME:
-	case ARIZONA_OUT4LMIX_INPUT_4_SOURCE:
-	case ARIZONA_OUT4LMIX_INPUT_4_VOLUME:
-	case ARIZONA_OUT4RMIX_INPUT_1_SOURCE:
-	case ARIZONA_OUT4RMIX_INPUT_1_VOLUME:
-	case ARIZONA_OUT4RMIX_INPUT_2_SOURCE:
-	case ARIZONA_OUT4RMIX_INPUT_2_VOLUME:
-	case ARIZONA_OUT4RMIX_INPUT_3_SOURCE:
-	case ARIZONA_OUT4RMIX_INPUT_3_VOLUME:
-	case ARIZONA_OUT4RMIX_INPUT_4_SOURCE:
-	case ARIZONA_OUT4RMIX_INPUT_4_VOLUME:
 	case ARIZONA_OUT5LMIX_INPUT_1_SOURCE:
 	case ARIZONA_OUT5LMIX_INPUT_1_VOLUME:
 	case ARIZONA_OUT5LMIX_INPUT_2_SOURCE:
@@ -2285,22 +1975,6 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case ARIZONA_OUT5RMIX_INPUT_3_VOLUME:
 	case ARIZONA_OUT5RMIX_INPUT_4_SOURCE:
 	case ARIZONA_OUT5RMIX_INPUT_4_VOLUME:
-	case ARIZONA_OUT6LMIX_INPUT_1_SOURCE:
-	case ARIZONA_OUT6LMIX_INPUT_1_VOLUME:
-	case ARIZONA_OUT6LMIX_INPUT_2_SOURCE:
-	case ARIZONA_OUT6LMIX_INPUT_2_VOLUME:
-	case ARIZONA_OUT6LMIX_INPUT_3_SOURCE:
-	case ARIZONA_OUT6LMIX_INPUT_3_VOLUME:
-	case ARIZONA_OUT6LMIX_INPUT_4_SOURCE:
-	case ARIZONA_OUT6LMIX_INPUT_4_VOLUME:
-	case ARIZONA_OUT6RMIX_INPUT_1_SOURCE:
-	case ARIZONA_OUT6RMIX_INPUT_1_VOLUME:
-	case ARIZONA_OUT6RMIX_INPUT_2_SOURCE:
-	case ARIZONA_OUT6RMIX_INPUT_2_VOLUME:
-	case ARIZONA_OUT6RMIX_INPUT_3_SOURCE:
-	case ARIZONA_OUT6RMIX_INPUT_3_VOLUME:
-	case ARIZONA_OUT6RMIX_INPUT_4_SOURCE:
-	case ARIZONA_OUT6RMIX_INPUT_4_VOLUME:
 	case ARIZONA_AIF1TX1MIX_INPUT_1_SOURCE:
 	case ARIZONA_AIF1TX1MIX_INPUT_1_VOLUME:
 	case ARIZONA_AIF1TX1MIX_INPUT_2_SOURCE:
@@ -2811,6 +2485,14 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case CLEARWATER_DSP7AUX4MIX_INPUT_1_SOURCE:
 	case CLEARWATER_DSP7AUX5MIX_INPUT_1_SOURCE:
 	case CLEARWATER_DSP7AUX6MIX_INPUT_1_SOURCE:
+	case MOON_DFC1MIX_INPUT_1_SOURCE:
+	case MOON_DFC2MIX_INPUT_1_SOURCE:
+	case MOON_DFC3MIX_INPUT_1_SOURCE:
+	case MOON_DFC4MIX_INPUT_1_SOURCE:
+	case MOON_DFC5MIX_INPUT_1_SOURCE:
+	case MOON_DFC6MIX_INPUT_1_SOURCE:
+	case MOON_DFC7MIX_INPUT_1_SOURCE:
+	case MOON_DFC8MIX_INPUT_1_SOURCE:
 	case ARIZONA_FX_CTRL1:
 	case ARIZONA_FX_CTRL2:
 	case ARIZONA_EQ1_1:
@@ -2971,14 +2653,6 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case CLEARWATER_FRF_COEFFICIENT_3R_2:
 	case CLEARWATER_FRF_COEFFICIENT_3R_3:
 	case CLEARWATER_FRF_COEFFICIENT_3R_4:
-	case CLEARWATER_FRF_COEFFICIENT_4L_1:
-	case CLEARWATER_FRF_COEFFICIENT_4L_2:
-	case CLEARWATER_FRF_COEFFICIENT_4L_3:
-	case CLEARWATER_FRF_COEFFICIENT_4L_4:
-	case CLEARWATER_FRF_COEFFICIENT_4R_1:
-	case CLEARWATER_FRF_COEFFICIENT_4R_2:
-	case CLEARWATER_FRF_COEFFICIENT_4R_3:
-	case CLEARWATER_FRF_COEFFICIENT_4R_4:
 	case CLEARWATER_FRF_COEFFICIENT_5L_1:
 	case CLEARWATER_FRF_COEFFICIENT_5L_2:
 	case CLEARWATER_FRF_COEFFICIENT_5L_3:
@@ -2987,14 +2661,31 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case CLEARWATER_FRF_COEFFICIENT_5R_2:
 	case CLEARWATER_FRF_COEFFICIENT_5R_3:
 	case CLEARWATER_FRF_COEFFICIENT_5R_4:
-	case CLEARWATER_FRF_COEFFICIENT_6L_1:
-	case CLEARWATER_FRF_COEFFICIENT_6L_2:
-	case CLEARWATER_FRF_COEFFICIENT_6L_3:
-	case CLEARWATER_FRF_COEFFICIENT_6L_4:
-	case CLEARWATER_FRF_COEFFICIENT_6R_1:
-	case CLEARWATER_FRF_COEFFICIENT_6R_2:
-	case CLEARWATER_FRF_COEFFICIENT_6R_3:
-	case CLEARWATER_FRF_COEFFICIENT_6R_4:
+	case MOON_DFC1_CTRL:
+	case MOON_DFC1_RX:
+	case MOON_DFC1_TX:
+	case MOON_DFC2_CTRL:
+	case MOON_DFC2_RX:
+	case MOON_DFC2_TX:
+	case MOON_DFC3_CTRL:
+	case MOON_DFC3_RX:
+	case MOON_DFC3_TX:
+	case MOON_DFC4_CTRL:
+	case MOON_DFC4_RX:
+	case MOON_DFC4_TX:
+	case MOON_DFC5_CTRL:
+	case MOON_DFC5_RX:
+	case MOON_DFC5_TX:
+	case MOON_DFC6_CTRL:
+	case MOON_DFC6_RX:
+	case MOON_DFC6_TX:
+	case MOON_DFC7_CTRL:
+	case MOON_DFC7_RX:
+	case MOON_DFC7_TX:
+	case MOON_DFC8_CTRL:
+	case MOON_DFC8_RX:
+	case MOON_DFC8_TX:
+	case MOON_DFC_STATUS:
 	case CLEARWATER_GPIO1_CTRL_1:
 	case CLEARWATER_GPIO1_CTRL_2:
 	case CLEARWATER_GPIO2_CTRL_1:
@@ -3071,42 +2762,30 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case CLEARWATER_GPIO37_CTRL_2:
 	case CLEARWATER_GPIO38_CTRL_1:
 	case CLEARWATER_GPIO38_CTRL_2:
-	case CLEARWATER_GPIO39_CTRL_1:
-	case CLEARWATER_GPIO39_CTRL_2:
-	case CLEARWATER_GPIO40_CTRL_1:
-	case CLEARWATER_GPIO40_CTRL_2:
 	case CLEARWATER_IRQ1_STATUS_1:
 	case CLEARWATER_IRQ1_STATUS_2:
-	case CLEARWATER_IRQ1_STATUS_3:
-	case CLEARWATER_IRQ1_STATUS_4:
-	case CLEARWATER_IRQ1_STATUS_5:
 	case CLEARWATER_IRQ1_STATUS_6:
 	case CLEARWATER_IRQ1_STATUS_7:
-	case CLEARWATER_IRQ1_STATUS_8:
 	case CLEARWATER_IRQ1_STATUS_9:
-	case CLEARWATER_IRQ1_STATUS_10:
 	case CLEARWATER_IRQ1_STATUS_11:
 	case CLEARWATER_IRQ1_STATUS_12:
 	case CLEARWATER_IRQ1_STATUS_13:
 	case CLEARWATER_IRQ1_STATUS_14:
 	case CLEARWATER_IRQ1_STATUS_15:
-	case CLEARWATER_IRQ1_STATUS_16:
 	case CLEARWATER_IRQ1_STATUS_17:
 	case CLEARWATER_IRQ1_STATUS_18:
 	case CLEARWATER_IRQ1_STATUS_19:
-	case CLEARWATER_IRQ1_STATUS_20:
 	case CLEARWATER_IRQ1_STATUS_21:
 	case CLEARWATER_IRQ1_STATUS_22:
 	case CLEARWATER_IRQ1_STATUS_23:
 	case CLEARWATER_IRQ1_STATUS_24:
 	case CLEARWATER_IRQ1_STATUS_25:
-	case CLEARWATER_IRQ1_STATUS_26:
 	case CLEARWATER_IRQ1_STATUS_27:
 	case CLEARWATER_IRQ1_STATUS_28:
-	case CLEARWATER_IRQ1_STATUS_29:
 	case CLEARWATER_IRQ1_STATUS_30:
 	case CLEARWATER_IRQ1_STATUS_31:
 	case CLEARWATER_IRQ1_STATUS_32:
+	case MOON_IRQ1_STATUS_33:
 	case CLEARWATER_IRQ1_MASK_1:
 	case CLEARWATER_IRQ1_MASK_2:
 	case CLEARWATER_IRQ1_MASK_3:
@@ -3122,6 +2801,24 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	case CLEARWATER_IRQ1_MASK_13:
 	case CLEARWATER_IRQ1_MASK_14:
 	case CLEARWATER_IRQ1_MASK_15:
+	case MOON_IRQ1_MASK_16:
+	case CLEARWATER_IRQ1_MASK_17:
+	case CLEARWATER_IRQ1_MASK_18:
+	case CLEARWATER_IRQ1_MASK_19:
+	case MOON_IRQ1_MASK_20:
+	case CLEARWATER_IRQ1_MASK_21:
+	case CLEARWATER_IRQ1_MASK_22:
+	case CLEARWATER_IRQ1_MASK_23:
+	case CLEARWATER_IRQ1_MASK_24:
+	case CLEARWATER_IRQ1_MASK_25:
+	case MOON_IRQ1_MASK_26:
+	case CLEARWATER_IRQ1_MASK_27:
+	case CLEARWATER_IRQ1_MASK_28:
+	case MOON_IRQ1_MASK_29:
+	case CLEARWATER_IRQ1_MASK_30:
+	case CLEARWATER_IRQ1_MASK_31:
+	case CLEARWATER_IRQ1_MASK_32:
+	case MOON_IRQ1_MASK_33:
 	case CLEARWATER_IRQ1_RAW_STATUS_1:
 	case CLEARWATER_IRQ1_RAW_STATUS_2:
 	case CLEARWATER_IRQ1_RAW_STATUS_7:
@@ -3153,10 +2850,9 @@ static bool clearwater_16bit_readable_register(struct device *dev, unsigned int 
 	}
 }
 
-static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int reg)
+static bool moon_16bit_volatile_register(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
-	case 0x2C2:
 	case ARIZONA_SOFTWARE_RESET:
 	case ARIZONA_DEVICE_REVISION:
 	case ARIZONA_HAPTICS_STATUS:
@@ -3171,10 +2867,10 @@ static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int 
 	case ARIZONA_HP_CTRL_2R:
 	case ARIZONA_HP_CTRL_3L:
 	case ARIZONA_HP_CTRL_3R:
-	case ARIZONA_DCS_HP1L_CONTROL:
-	case ARIZONA_DCS_HP1R_CONTROL:
 	case ARIZONA_MIC_DETECT_3:
 	case ARIZONA_MIC_DETECT_4:
+	case MOON_MICDET2_CONTROL_3:
+	case MOON_MICDET2_CONTROL_4:
 	case ARIZONA_HEADPHONE_DETECT_2:
 	case ARIZONA_HEADPHONE_DETECT_3:
 	case ARIZONA_HP_DACVAL:
@@ -3190,6 +2886,7 @@ static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int 
 	case CLEARWATER_ASRC2_STATUS:
 	case CLEARWATER_ASRC1_STATUS:
 	case ARIZONA_CLOCK_CONTROL:
+	case MOON_DFC_STATUS:
 	case CLEARWATER_GPIO1_CTRL_1:
 	case CLEARWATER_GPIO2_CTRL_1:
 	case CLEARWATER_GPIO3_CTRL_1:
@@ -3228,31 +2925,39 @@ static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int 
 	case CLEARWATER_GPIO36_CTRL_1:
 	case CLEARWATER_GPIO37_CTRL_1:
 	case CLEARWATER_GPIO38_CTRL_1:
-	case CLEARWATER_GPIO39_CTRL_1:
-	case CLEARWATER_GPIO40_CTRL_1:
 	case CLEARWATER_IRQ1_STATUS_1:
 	case CLEARWATER_IRQ1_STATUS_2:
+	case CLEARWATER_IRQ1_STATUS_3:
+	case CLEARWATER_IRQ1_STATUS_4:
+	case CLEARWATER_IRQ1_STATUS_5:
 	case CLEARWATER_IRQ1_STATUS_6:
 	case CLEARWATER_IRQ1_STATUS_7:
+	case CLEARWATER_IRQ1_STATUS_8:
 	case CLEARWATER_IRQ1_STATUS_9:
+	case CLEARWATER_IRQ1_STATUS_10:
 	case CLEARWATER_IRQ1_STATUS_11:
 	case CLEARWATER_IRQ1_STATUS_12:
 	case CLEARWATER_IRQ1_STATUS_13:
 	case CLEARWATER_IRQ1_STATUS_14:
 	case CLEARWATER_IRQ1_STATUS_15:
+	case CLEARWATER_IRQ1_STATUS_16:
 	case CLEARWATER_IRQ1_STATUS_17:
 	case CLEARWATER_IRQ1_STATUS_18:
 	case CLEARWATER_IRQ1_STATUS_19:
+	case CLEARWATER_IRQ1_STATUS_20:
 	case CLEARWATER_IRQ1_STATUS_21:
 	case CLEARWATER_IRQ1_STATUS_22:
 	case CLEARWATER_IRQ1_STATUS_23:
 	case CLEARWATER_IRQ1_STATUS_24:
 	case CLEARWATER_IRQ1_STATUS_25:
+	case CLEARWATER_IRQ1_STATUS_26:
 	case CLEARWATER_IRQ1_STATUS_27:
 	case CLEARWATER_IRQ1_STATUS_28:
+	case CLEARWATER_IRQ1_STATUS_29:
 	case CLEARWATER_IRQ1_STATUS_30:
 	case CLEARWATER_IRQ1_STATUS_31:
 	case CLEARWATER_IRQ1_STATUS_32:
+	case MOON_IRQ1_STATUS_33:
 	case CLEARWATER_IRQ1_RAW_STATUS_1:
 	case CLEARWATER_IRQ1_RAW_STATUS_2:
 	case CLEARWATER_IRQ1_RAW_STATUS_7:
@@ -3281,98 +2986,98 @@ static bool clearwater_16bit_volatile_register(struct device *dev, unsigned int 
 	}
 }
 
-static bool clearwater_32bit_readable_register(struct device *dev, unsigned int reg)
+static bool moon_32bit_readable_register(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
 	case ARIZONA_WSEQ_SEQUENCE_1 ... ARIZONA_WSEQ_SEQUENCE_508:
-	case CLEARWATER_OTP_HPDET_CALIB_1 ... CLEARWATER_OTP_HPDET_CALIB_2:
-	case CLEARWATER_DSP1_CONFIG ... CLEARWATER_DSP1_SCRATCH_2_3:
-	case CLEARWATER_DSP2_CONFIG ... CLEARWATER_DSP2_SCRATCH_2_3:
-	case CLEARWATER_DSP3_CONFIG ... CLEARWATER_DSP3_SCRATCH_2_3:
-	case CLEARWATER_DSP4_CONFIG ... CLEARWATER_DSP4_SCRATCH_2_3:
-	case CLEARWATER_DSP5_CONFIG ... CLEARWATER_DSP5_SCRATCH_2_3:
-	case CLEARWATER_DSP6_CONFIG ... CLEARWATER_DSP6_SCRATCH_2_3:
-	case CLEARWATER_DSP7_CONFIG ... CLEARWATER_DSP7_SCRATCH_2_3:
+	case MOON_OTP_HPDET_CALIB_1 ... MOON_OTP_HPDET_CALIB_2:
+	case CLEARWATER_DSP1_CONFIG ... MOON_DSP1_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP2_CONFIG ... MOON_DSP2_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP3_CONFIG ... MOON_DSP3_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP4_CONFIG ... MOON_DSP4_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP5_CONFIG ... MOON_DSP5_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP6_CONFIG ... MOON_DSP6_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP7_CONFIG ... MOON_DSP7_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
 		return true;
 	default:
-		return clearwater_is_adsp_memory(dev, reg);
+		return moon_is_adsp_memory(dev, reg);
 	}
 }
 
-static bool clearwater_32bit_volatile_register(struct device *dev, unsigned int reg)
+static bool moon_32bit_volatile_register(struct device *dev, unsigned int reg)
 {
 	switch (reg) {
 	case ARIZONA_WSEQ_SEQUENCE_1 ... ARIZONA_WSEQ_SEQUENCE_508:
-	case CLEARWATER_OTP_HPDET_CALIB_1 ... CLEARWATER_OTP_HPDET_CALIB_2:
-	case CLEARWATER_DSP1_CONFIG ... CLEARWATER_DSP1_SCRATCH_2_3:
-	case CLEARWATER_DSP2_CONFIG ... CLEARWATER_DSP2_SCRATCH_2_3:
-	case CLEARWATER_DSP3_CONFIG ... CLEARWATER_DSP3_SCRATCH_2_3:
-	case CLEARWATER_DSP4_CONFIG ... CLEARWATER_DSP4_SCRATCH_2_3:
-	case CLEARWATER_DSP5_CONFIG ... CLEARWATER_DSP5_SCRATCH_2_3:
-	case CLEARWATER_DSP6_CONFIG ... CLEARWATER_DSP6_SCRATCH_2_3:
-	case CLEARWATER_DSP7_CONFIG ... CLEARWATER_DSP7_SCRATCH_2_3:
+	case MOON_OTP_HPDET_CALIB_1 ... MOON_OTP_HPDET_CALIB_2:
+	case CLEARWATER_DSP1_CONFIG ... MOON_DSP1_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP2_CONFIG ... MOON_DSP2_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP3_CONFIG ... MOON_DSP3_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP4_CONFIG ... MOON_DSP4_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP5_CONFIG ... MOON_DSP5_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP6_CONFIG ... MOON_DSP6_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
+	case CLEARWATER_DSP7_CONFIG ... MOON_DSP7_PMEM_ERR_ADDR_XMEM_ERR_ADDR:
 		return true;
 	default:
-		return clearwater_is_adsp_memory(dev, reg);
+		return moon_is_adsp_memory(dev, reg);
 	}
 }
 
-const struct regmap_config clearwater_16bit_spi_regmap = {
-	.name = "clearwater_16bit",
+const struct regmap_config moon_16bit_spi_regmap = {
+	.name = "moon_16bit",
 	.reg_bits = 32,
 	.pad_bits = 16,
 	.val_bits = 16,
 
-	.max_register = 0x2fff,
-	.readable_reg = clearwater_16bit_readable_register,
-	.volatile_reg = clearwater_16bit_volatile_register,
+	.max_register = CLEARWATER_INTERRUPT_RAW_STATUS_1,
+	.readable_reg = moon_16bit_readable_register,
+	.volatile_reg = moon_16bit_volatile_register,
 
 	.cache_type = REGCACHE_RBTREE,
-	.reg_defaults = clearwater_reg_default,
-	.num_reg_defaults = ARRAY_SIZE(clearwater_reg_default),
+	.reg_defaults = moon_reg_default,
+	.num_reg_defaults = ARRAY_SIZE(moon_reg_default),
 };
-EXPORT_SYMBOL_GPL(clearwater_16bit_spi_regmap);
+EXPORT_SYMBOL_GPL(moon_16bit_spi_regmap);
 
-const struct regmap_config clearwater_16bit_i2c_regmap = {
-	.name = "clearwater_16bit",
+const struct regmap_config moon_16bit_i2c_regmap = {
+	.name = "moon_16bit",
 	.reg_bits = 32,
 	.val_bits = 16,
 
-	.max_register = 0x2fff,
-	.readable_reg = clearwater_16bit_readable_register,
-	.volatile_reg = clearwater_16bit_volatile_register,
+	.max_register = CLEARWATER_INTERRUPT_RAW_STATUS_1,
+	.readable_reg = moon_16bit_readable_register,
+	.volatile_reg = moon_16bit_volatile_register,
 
 	.cache_type = REGCACHE_RBTREE,
-	.reg_defaults = clearwater_reg_default,
-	.num_reg_defaults = ARRAY_SIZE(clearwater_reg_default),
+	.reg_defaults = moon_reg_default,
+	.num_reg_defaults = ARRAY_SIZE(moon_reg_default),
 };
-EXPORT_SYMBOL_GPL(clearwater_16bit_i2c_regmap);
+EXPORT_SYMBOL_GPL(moon_16bit_i2c_regmap);
 
-const struct regmap_config clearwater_32bit_spi_regmap = {
-	.name = "clearwater_32bit",
+const struct regmap_config moon_32bit_spi_regmap = {
+	.name = "moon_32bit",
 	.reg_bits = 32,
 	.reg_stride = 2,
 	.pad_bits = 16,
 	.val_bits = 32,
 
-	.max_register = CLEARWATER_DSP7_SCRATCH_2_3,
-	.readable_reg = clearwater_32bit_readable_register,
-	.volatile_reg = clearwater_32bit_volatile_register,
+	.max_register = MOON_DSP7_PMEM_ERR_ADDR_XMEM_ERR_ADDR,
+	.readable_reg = moon_32bit_readable_register,
+	.volatile_reg = moon_32bit_volatile_register,
 
 	.cache_type = REGCACHE_RBTREE,
 };
-EXPORT_SYMBOL_GPL(clearwater_32bit_spi_regmap);
+EXPORT_SYMBOL_GPL(moon_32bit_spi_regmap);
 
-const struct regmap_config clearwater_32bit_i2c_regmap = {
-	.name = "clearwater_32bit",
+const struct regmap_config moon_32bit_i2c_regmap = {
+	.name = "moon_32bit",
 	.reg_bits = 32,
 	.reg_stride = 2,
 	.val_bits = 32,
 
-	.max_register = CLEARWATER_DSP7_SCRATCH_2_3,
-	.readable_reg = clearwater_32bit_readable_register,
-	.volatile_reg = clearwater_32bit_volatile_register,
+	.max_register = MOON_DSP7_PMEM_ERR_ADDR_XMEM_ERR_ADDR,
+	.readable_reg = moon_32bit_readable_register,
+	.volatile_reg = moon_32bit_volatile_register,
 
 	.cache_type = REGCACHE_RBTREE,
 };
-EXPORT_SYMBOL_GPL(clearwater_32bit_i2c_regmap);
+EXPORT_SYMBOL_GPL(moon_32bit_i2c_regmap);
