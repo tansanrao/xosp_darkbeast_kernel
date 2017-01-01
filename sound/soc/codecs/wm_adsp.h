@@ -30,8 +30,6 @@
 #define WM_ADSP2_REGION_7 BIT(7)
 #define WM_ADSP2_REGION_8 BIT(8)
 #define WM_ADSP2_REGION_9 BIT(9)
-#define WM_ADSP2_REGION_1_3 (WM_ADSP2_REGION_1 | \
-		WM_ADSP2_REGION_2 | WM_ADSP2_REGION_3)
 #define WM_ADSP2_REGION_1_9 (WM_ADSP2_REGION_1 | \
 		WM_ADSP2_REGION_2 | WM_ADSP2_REGION_3 | \
 		WM_ADSP2_REGION_4 | WM_ADSP2_REGION_5 | \
@@ -83,7 +81,7 @@ struct wm_adsp_fw_defs {
 };
 
 struct wm_adsp_fw_features {
-	bool edac_shutdown:1;
+	bool shutdown:1;
 	bool ez2control_trigger:1;
 	bool host_read_buf:1;
 };
@@ -169,7 +167,6 @@ struct wm_adsp {
 	char *bin_file_name;
 #endif
 
-	unsigned int (*hpimp_cb)(struct device *dev);
 };
 
 #define WM_ADSP1(wname, num) \
@@ -185,11 +182,12 @@ struct wm_adsp {
 	.reg = SND_SOC_NOPM, .shift = num, .event = wm_adsp2_event, \
 	.event_flags = SND_SOC_DAPM_POST_PMU | SND_SOC_DAPM_PRE_PMD }
 
-extern const struct snd_kcontrol_new wm_adsp_fw_controls[];
+extern const struct snd_kcontrol_new wm_adsp1_fw_controls[];
+extern const struct snd_kcontrol_new wm_adsp2_fw_controls[];
+extern const struct snd_kcontrol_new wm_adsp2v2_fw_controls[];
 
 int wm_adsp1_init(struct wm_adsp *dsp);
 int wm_adsp2_init(struct wm_adsp *dsp, struct mutex *fw_lock);
-void wm_adsp2_remove(struct wm_adsp *dsp);
 int wm_adsp2_codec_probe(struct wm_adsp *dsp, struct snd_soc_codec *codec);
 int wm_adsp2_codec_remove(struct wm_adsp *dsp, struct snd_soc_codec *codec);
 int wm_adsp1_event(struct snd_soc_dapm_widget *w,
